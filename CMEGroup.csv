@@ -1,0 +1,308 @@
+IBV,CME,Ibovespa Futures,GJMQVZ,CME/IBV
+EM,CME,1-month Eurodollar Futures,FGHJKMNQUVXZ,CME/EM
+EY,CME,EuroYen Futures,HMUZ,CME/EY
+ED,CME,Eurodollar Futures,HJKMNQUZ,CME/ED
+CPO,CME,Crude Palm Oil Futures,FHKMNQUX,CME/CPO
+ES,CME,E-mini S&P 500 Futures,HMUZ,CME/ES
+NN,NYMEX,Henry Hub Swap Futures,FGHJKMNQUVXZ,CME/NN
+TY,CBT,10 Yr Note Futures,HMUZ,CME/TY
+FV,CBT,5 Yr Note Futures,HMUZ,CME/FV
+N9,NYMEX,PJM Western Hub Real-Time Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/N9
+CL,NYMEX,Crude Oil Futures,FGHJKMNQUVXZ,CME/CL
+C,CBT,Corn Futures,HKNUZ,CME/C
+NG,NYMEX,Natural Gas (Henry Hub) Physical Futures,FGHJKMNQUVXZ,CME/NG
+V3,NYMEX,PJM AEP Dayton Hub Real-Time Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/V3
+NP,NYMEX,Henry Hub Penultimate NP Futures,FGHJKMNQUVXZ,CME/NP
+B6,NYMEX,PJM Northern Illinois Hub Real-Time Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/B6
+TU,CBT,2 Yr Note Futures,HMUZ,CME/TU
+E4,NYMEX,PJM Western Hub Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/E4
+K4,NYMEX,NYISO Zone A Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/K4
+US,CBT,U.S. Treasury Bond Futures,HMUZ,CME/US
+D2,NYMEX,NYISO Zone G Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/D2
+S,CBT,Soybean Futures,FHKNQUX,CME/S
+L3,NYMEX,PJM Northern Illinois Hub Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/L3
+UL,CBT,Ultra U.S. Treasury Bond Futures,HMUZ,CME/UL
+HH,NYMEX,Natural Gas (Henry Hub) Last-day Financial Futures,FGHJKMNQUVXZ,CME/HH
+NQ,CME,E-mini NASDAQ 100 Futures,HMUZ,CME/NQ
+W,CBT,Wheat Futures,HKNUZ,CME/W
+GC,CEC,Gold Futures,GHJKMQVZ,CME/GC
+H4,NYMEX,MISO Indiana Hub (formerly Cinergy Hub) Real-Time Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/H4
+O1,NYMEX,ERCOT West 345 kV Hub 5 MW Off-Peak Futures,FGHJKMNQUVXZ,CME/O1
+BO,CBT,Soybean Oil Futures,FHKNQUVZ,CME/BO
+H2,NYMEX,ISO New England Mass Hub Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/H2
+LC,CME,Live Cattle Futures,GJMQVZ,CME/LC
+D4,NYMEX,NYISO Zone J Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/D4
+HO,NYMEX,NY Harbor ULSD Futures,FGHJKMNQUVXZ,CME/HO
+I6,NYMEX,ERCOT North 345 kV Hub 5 MW Off-Peak Futures,FGHJKMNQUVXZ,CME/I6
+FF,CBT,30 Day Federal Funds Futures,FGHJKMNQUVXZ,CME/FF
+SM,CBT,Soybean Meal Futures,FHKNQUVZ,CME/SM
+LN,CME,Lean Hog Futures,GJKMNQVZ,CME/LN
+RB,NYMEX,RBOB Gasoline Physical Futures,FGHJKMNQUVXZ,CME/RB
+EC,CME,Euro FX Futures,HMUZ,CME/EC
+JY,CME,Japanese Yen Futures,HMUZ,CME/JY
+BP,CME,British Pound Futures,HMUZ,CME/BP
+K2,NYMEX,MISO Indiana Hub (formerly Cinergy Hub) Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/K2
+X1,NYMEX,PJM AECO Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/X1
+OFM,NYMEX,Ontario Off-Peak Calendar-Month Futures,FGHJKMNQUVXZ,CME/OFM
+CD,CME,Canadian Dollar Futures,HMUZ,CME/CD
+HG,CEC,Copper Futures,FGHJKMNQUVXZ,CME/HG
+KW,CBT,KC HRW Wheat Futures,HKNUZ,CME/KW
+CS,NYMEX,WTI Financial Futures,FGHJKMNQUVXZ,CME/CS
+SP,CME,S&P 500 Futures,HMUZ,CME/SP
+SI,CEC,Silver Futures,FHJKNUZ,CME/SI
+W6,NYMEX,PJM PSEG Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/W6
+YM,CBT,E-mini Dow ($5) Futures,HMUZ,CME/YM
+D9,NYMEX,PJM ComEd Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/D9
+6T,NYMEX,In Delivery Month European Union Allowance (EUA) Futures,HMUZ,CME/6T
+MP,CME,Mexican Peso Futures,FGHJKMNQUVXZ,CME/MP
+F5,NYMEX,PJM PPL Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/F5
+AD,CME,Australian Dollar Futures,HMUZ,CME/AD
+FTM,NYMEX,MISO Indiana Hub Real-Time Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/FTM
+N1Y,CME,Nikkei/Yen Futures,HJKMNUZ,CME/N1Y
+L1,NYMEX,PJM Western Hub Peak Calendar-Month Real-Time LMP Futures,FGHJKMNQUVXZ,CME/L1
+MD,CME,E-mini S&P MidCap 400 Futures,HMUZ,CME/MD
+HMO,NYMEX,MISO Michigan Hub 5 MW Off-Peak Calendar-Month Day-Ahead Futures,FGHJKMNQUVXZ,CME/HMO
+BK,NYMEX,WTI-Brent Financial Futures,FGHJKMNQUVXZ,CME/BK
+R7,NYMEX,PJM AEP Dayton Hub Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/R7
+NK,CME,Nikkei/USD Futures,HMUZ,CME/NK
+4M,NYMEX,NYISO Zone F 5 MW Off-Peak Calendar-Month Day-Ahead LBMP Futures,HJKMNQUVXZ,CME/4M
+MTF,NYMEX,Coal (API2) CIF ARA (ARGUS-McCloskey) Futures,FGHJKMNQUVXZ,CME/MTF
+U5,NYMEX,ISO New England Rhode Island Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/U5
+P8,NYMEX,ISO New England North East Massachusetts Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/P8
+HP,NYMEX,Natural Gas (Henry Hub) Penultimate Financial Futures,FGHJKMNQUVXZ,CME/HP
+LT,NYMEX,Gulf Coast ULSD (Platts) Up-Down Futures,FGHJKMNQUVXZ,CME/LT
+BZ,NYMEX,Brent Crude Oil Financial Futures,FGHJKMNQUVXZ,CME/BZ
+A3,NYMEX,NYISO Zone C 5 MW Off-Peak Calendar-Month Day-Ahead LBMP Futures,FGHJKMNQUVXZ,CME/A3
+L9,NYMEX,ISO New England West Central Massachusetts Zone 5 MW Off-Peak Calendar-Month Day Ahead LMP Futures,FGHJKMNQUVXZ,CME/L9
+PL,NYMEX,Platinum Futures,FHJKNV,CME/PL
+Z9,NYMEX,PJM AEP Dayton Hub 5MW Peak Calendar-Month Real-Time LMP Futures,FGHJKMNQUVXZ,CME/Z9
+B3,NYMEX,PJM Northern Illinois Hub 5 MW Peak Calendar-Month Real-Time LMP Futures,FGHJKMNQUVXZ,CME/B3
+R3,NYMEX,PJM BGE Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/R3
+T3,NYMEX,NYISO Zone G Day-Ahead Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/T3
+N1U,CBT,10 Year USD Deliverable Interest Rate Swap Futures,MU,CME/N1U
+46,NYMEX,PJM METED Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/46
+K3,NYMEX,NYISO Zone A Day-Ahead Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/K3
+FC,CME,Feeder Cattle Futures,FHJKQUVX,CME/FC
+J4,NYMEX,PJM Western Hub Day-Ahead Peak Calendar-Month 5 MW Futures  ,FGHJKMNQUVXZ,CME/J4
+WJ,NYMEX,LLS (Argus) vs. WTI Financial Futures,FGHJKMNQUVXZ,CME/WJ
+ME,NYMEX,Gulf Coast Jet (Platts) Up-Down Futures,FGHJKMNQUVXZ,CME/ME
+W4,NYMEX,PJM APS Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/W4
+SF,CME,Swiss Franc Futures,HMUZ,CME/SF
+CY,NYMEX,Brent Financial Futures,FGHJKMNQUVXZ,CME/CY
+RU,CME,Russian Ruble Futures,FGHJKMNQUVXZ,CME/RU
+PA,NYMEX,Palladium Futures,HJKMUZ,CME/PA
+MF,NYMEX,Gulf Coast No. 6 Fuel Oil 3.0% (Platts) Futures,FGHJKMNQUVXZ,CME/MF
+H3,NYMEX,MISO Indiana Hub (formerly Cinergy Hub) 5 Month Peak Calendar-Month Real-Time Futures,FGHJKMNQUVXZ,CME/H3
+CU,NYMEX,Chicago Ethanol (Platts) Futures,FGHJKMNQUVXZ,CME/CU
+SA,CBT,5 Year USD Deliverable Interest Rate Swap Futures,HMUZ,CME/SA
+MFF,NYMEX,Coal (API4) FOB Richards Bay (ARGUS-McCloskey) Futures,FGHJKMNQUVXZ,CME/MFF
+HK,NYMEX,NY Harbor ULSD Crack Spread Futures,FGHJKMNQUVXZ,CME/HK
+WS,NYMEX,Crude Oil Financial Futures,FGHJKMNQUVXZ,CME/WS
+U6,NYMEX,ISO New England Mass Hub 5 MW Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/U6
+7K,NYMEX,Gasoline Euro-bob Oxy NWE Barges (Argus) Crack Spread Futures,FGHJKMNQUVXZ,CME/7K
+GZ,NYMEX,European Gasoil Brent Crack Spread Futures,HJKMNQUVXZ,CME/GZ
+DA,CME,Class III Milk Futures,FGHJKMNQUVXZ,CME/DA
+GCU,NYMEX,Gulf Coast No. 6 Fuel Oil 3.0% (Platts) vs. European 3.5% Fuel Oil Barges FOB Rdam (Platts) Futures,FGHJKMNQUVXZ,CME/GCU
+FO,NYMEX,3.5% Fuel Oil Barges FOB Rdam (Platts) Crack Spread Futures,FGHJKMNQUVXZ,CME/FO
+GA,CME,Goldman Sachs - Excess Return Futures,FGHJKMNQUVXZ,CME/GA
+FDM,NYMEX,MISO Indiana Hub Day-Ahead Off-Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/FDM
+F2,NYMEX,PJM JCPL Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/F2
+PH,NYMEX,Panhandle Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/PH
+4P,NYMEX,PJM PECO Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/4P
+N3,NYMEX,PJM Northern Illinois Hub Day-Ahead LMP Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/N3
+PG,NYMEX,Dominion South Point Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/PG
+GY,NYMEX,Gulf Coast ULSD (Platts) Crack Spread Futures,FGHJKMNQUVXZ,CME/GY
+NE,CME,New Zealand Dollar Futures,HMUZ,CME/NE
+D3,NYMEX,NYISO Zone J Day-Ahead Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/D3
+NL,NYMEX,NGPL Mid-Con Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NL
+JM,NYMEX,PJM Western Hub Real-Time Peak Calendar-Month 2.5 MW Futures,FGHJKMNQUVXZ,CME/JM
+OPM,NYMEX,Ontario Peak Calendar-Month Futures,FGHJKMNQUVXZ,CME/OPM
+PD,NYMEX,NGPL TexOk Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/PD
+BB,NYMEX,Brent Crude Oil Futures,FGHJKMNQUVXZ,CME/BB
+B0,NYMEX,Mont Belvieu LDH Propane (OPIS) Futures,FGHJKMNQUVXZ,CME/B0
+I5,NYMEX,ERCOT North 345 kV Hub 5 MW Peak Futures,FGHJKMNQUVXZ,CME/I5
+WCC,NYMEX,Canadian Heavy Crude Oil Index (Net Energy) Futures,FGHJKMNQUVXZ,CME/WCC
+GL,NYMEX,Columbia Gulf Louisiana Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/GL
+RBB,NYMEX,RBOB Gasoline Brent Crack Spread Futures,FGHJKMNQUVXZ,CME/RBB
+N1,NYMEX,ERCOT West 345 kV Hub 5 MW Peak Futures,FGHJKMNQUVXZ,CME/N1
+RP,CME,Euro/British Pound Futures,HMUZ,CME/RP
+58,NYMEX,NYISO Zone E 5 MW Off-Peak Calendar-Month Day-Ahead LBMP Futures,FGHJKMNQUVXZ,CME/58
+HA,NYMEX,NY Harbor ULSD vs. Gasoil Futures,HJKMNQUVXZ,CME/HA
+H5,NYMEX,MISO Indiana Hub (formerly Cinergy Hub) Day-Ahead Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/H5
+NEN,NYMEX,ANR Oklahoma Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NEN
+AGA,NYMEX,Singapore Gasoil (Platts) vs. Gasoil Futures,HJKMNQUVXZ,CME/AGA
+RV,NYMEX,Gulf Coast Unl 87 Gasoline M1 (Platts) vs. RBOB Gasoline Futures,HJKMNQUVXZ,CME/RV
+D0,NYMEX,Mont Belvieu Normal Butane (OPIS) Futures,FGHJKMNQUVXZ,CME/D0
+RM,NYMEX,RBOB Gasoline Crack Spread Futures,HJKMNQUVXZ,CME/RM
+JP,NYMEX,PJM Off-Peak Calendar-Month LMP Futures,FGHJKMNQUVXZ,CME/JP
+A6,NYMEX,Group Three ULSD (Platts) vs. NY Harbor ULSD Futures,FGHJKMNQUVXZ,CME/A6
+QP,NYMEX,Powder River Basin Coal (Platts OTC Broker Index) Futures,FGHJKMNQUVXZ,CME/QP
+MPX,NYMEX,NY Harbor ULSD Financial Futures,FGHJKMNQUVXZ,CME/MPX
+HB,NYMEX,Henry Hub Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/HB
+1N,NYMEX,Singapore Mogas 92 Unleaded (Platts) Futures,FGHJKMNQUVXZ,CME/1N
+BR,CME,Brazilian Real Futures,FGHJKMNQUVXZ,CME/BR
+EN,NYMEX,European Naphtha (Platts) Crack Spread Futures,FGHJKMNQUVXZ,CME/EN
+KA,NYMEX,NYISO Zone A Peak LBMP Futures,FGHJKMNQUVXZ,CME/KA
+RY,CME,Euro/Japanese Yen Futures,HMUZ,CME/RY
+ND,CME,NASDAQ 100 Futures,HMUZ,CME/ND
+RL,NYMEX,RBOB Gasoline Financial Futures,FGHJKMNQUVXZ,CME/RL
+HR,NYM,U.S. Midwest Domestic Hot-Rolled Coil Steel (CRU) Index Futures,FGHJKMNQUVXZ,CME/HR
+O,CBT,Oats Futures,HKNUZ,CME/O
+NR,NYMEX,Rockies Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NR
+YX,NYMEX,Mars (Argus) vs. WTI Financial Futures,FGHJKMNQUVXZ,CME/YX
+SG,NYMEX,Singapore Gasoil (Platts) Futures,HJKMNQUVXZ,CME/SG
+GI,CME,Goldman Sachs C.I. Futures,FGHJKMNQUVXZ,CME/GI
+E8,NYMEX,PJM DPL Zone Off-Peak Calendar-Month Day-Ahead LMP Futures,HJK,CME/E8
+RF,CME,Euro/Swiss Franc Futures,HMUZ,CME/RF
+DJ,CBT,DJIA ($10) Futures,HMUZ,CME/DJ
+AFF,NYMEX,WTI Midland (Argus) vs. WTI Financial Futures,HJKMNQUVXZ,CME/AFF
+U3,NYMEX,ISO New England New Hampshire Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/U3
+DK,CME,Class IV Milk Futures,FGHJKMNQUVXZ,CME/DK
+Y1,NYMEX,PJM AECO Zone Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/Y1
+D7,NYMEX,PJM AEP Dayton Hub Day-Ahead LMP Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/D7
+ABY,NYMEX,WTI-Brent Bullet Futures,FGHJKMNQUVXZ,CME/ABY
+5Z,NYMEX,Columbia Gulf Mainline Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/5Z
+UV,NYMEX,European 3.5% Fuel Oil Barges FOB Rdam (Platts) Futures,FGHJKMNQUVXZ,CME/UV
+TZ6,NYMEX,Transco Zone 6 Non-N.Y. Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/TZ6
+NX,NYMEX,Texas Eastern Zone M-3 Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NX
+YC,CBT,Mini-Corn Futures,HKNUZ,CME/YC
+L5,NYMEX,PJM PPL Zone Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/L5
+QX,NYMEX,Eastern Rail Delivery CSX Coal Futures,FGHJKMNQUVXZ,CME/QX
+0D,NYMEX,Mini European 3.5% Fuel Oil Barges FOB Rdam (Platts) Futures,FGHJKMNQUVXZ,CME/0D
+RK,NYMEX,Singapore Jet Kerosene (Platts) vs. Gasoil (Platts) Futures,FGHJKMNQUVXZ,CME/RK
+PTM,NYMEX,MISO Indiana Hub Real-Time Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/PTM
+YK,CBT,Mini Soybean Futures,FHKNQUX,CME/YK
+CSC,CME,Cash-Settled Cheese Futures,FGHJKMNQUVXZ,CME/CSC
+CZ,NYMEX,Transco Zone 3 Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/CZ
+FY,NYMEX,Dated Brent (Platts) to Frontline Brent Futures,FGHJKMNQUVXZ,CME/FY
+MM,NYMEX,New York Harbor Residual Fuel 1.0% (Platts) Futures,HJKMNQUVXZ,CME/MM
+CI,NYMEX,CIG Rockies Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/CI
+KJ,NYMEX,NYISO Zone J Peak LBMP Futures,FGHJKMNQUVXZ,CME/KJ
+C0,NYMEX,Mont Belvieu Ethane (OPIS) Futures,FGHJKMNQUVXZ,CME/C0
+AW,CBT,Dow Jones-UBS Commodity Index Futures,HMUZ,CME/AW
+L6,NYMEX,PJM PSEG Zone Peak Calendar-Month Day-Ahead LMP 5 MW Futures,FGHJKMNQUVXZ,CME/L6
+KS,NYMEX,Singapore Jet Kerosene (Platts) Futures,FGHJKMNQUVXZ,CME/KS
+LY,NYMEX,Gulf Coast ULSD (Platts) Futures,FGHJKMNQUVXZ,CME/LY
+RR,CBT,Rough Rice Futures,FHKNUX,CME/RR
+D8,NYMEX,PJM ComEd Zone 5 MW Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/D8
+VP,NYMEX,PJM AEP Dayton Hub Off-Peak LMP Futures,FGHJKMNQUVXZ,CME/VP
+UX,NYMEX,UxC Uranium U3O8 Futures,FGHJKMNQUVXZ,CME/UX
+VM,NYMEX,PJM AEP Dayton Hub Real-Time Peak Calendar-Month 2.5 MW Futures,FGHJKMNQUVXZ,CME/VM
+NKN,NYMEX,Sumas Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NKN
+KG,NYMEX,NYISO Zone G Peak LBMP Futures,FGHJKMNQUVXZ,CME/KG
+NI,NYMEX,ISO New England Mass Hub Day-Ahead Peak Calendar-Month 2.5 MW Futures,FGHJKMNQUVXZ,CME/NI
+MEO,NYMEX,Mini Gasoline Euro-bob Oxy NWE Barges (Argus) Futures,FHJKMNQUVXZ,CME/MEO
+UB,NYMEX,Dated Brent (Platts) Financial Futures,FGHJKMNQUVXZ,CME/UB
+E5,NYMEX,Argus LLS vs. WTI (Argus) Trade Month Futures,FJKMNQUVXZ,CME/E5
+RA,CME,South African Rand Futures,FGHJKMNQUVXZ,CME/RA
+TR,NYMEX,Transco Zone 4 Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/TR
+HMW,NYMEX,MISO Michigan Hub 5 MW Peak Calendar-Month Day-Ahead Futures,FGHJKMNQUVXZ,CME/HMW
+VR,NYMEX,NY 1% Fuel Oil (Platts) vs. Gulf Coast 3% Fuel Oil (Platts) Futures,FGHJKMNQUVXZ,CME/VR
+IN,NYMEX,Henry Hub Natural Gas (Platts Gas Daily/Platts IFERC) Index Futures,HJ,CME/IN
+MTS,NYMEX,Mini Singapore Fuel Oil 380 cst (Platts) Futures,FGHJKMNQUVXZ,CME/MTS
+NS,NYMEX,SoCal Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NS
+B4,NYMEX,Algonquin City-Gates Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/B4
+I3,CBT,30 Year USD Deliverable Interest Rate Swap Futures,HMUZ,CME/I3
+CB,CME,Cash-settled Butter Futures,FGHJKMNQUVXZ,CME/CB
+E3,NYMEX,PJM BGE Zone Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/E3
+E7,CME,E-mini Euro FX Futures,MU,CME/E7
+KI,NYMEX,ISO New England Monthly Off Peak LMP Swap Future,FGHJKMNQUVXZ,CME/KI
+QM,NYMEX,E-mini Crude Oil Futures,FGHJKMNQUVXZ,CME/QM
+7H,NYMEX,Gasoline Euro-bob Oxy NWE Barges (Argus) Futures,FGHJKMNQUVXZ,CME/7H
+UO,NYMEX,PJM Northern Illinois Hub Off-Peak LMP Futures,FGHJKMNQUVXZ,CME/UO
+FH,NYMEX,WTS (Argus) vs. WTI Trade Month Futures,FGHJKMNQUVXZ,CME/FH
+HOB,NYMEX,NY Harbor ULSD Brent Crack Spread Futures,FGHJKMNQUVXZ,CME/HOB
+UA,NYMEX,Singapore Fuel Oil 180 cst (Platts) Futures,FGHJKMNQUVXZ,CME/UA
+D6,NYMEX,PJM Duquesne Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,HJKMNQUVXZ,CME/D6
+P5,NYMEX,ISO New England South East Massachusetts Zone 5 MW Off-Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/P5
+M6E,CME,E-micro Euro/American Dollar Futures,MU,CME/M6E
+SE,NYMEX,Singapore Fuel Oil 380 cst (Platts) Futures,FGHJKMNQUVXZ,CME/SE
+TC,NYMEX,Columbia Gas TCO (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/TC
+KB,NYMEX,NYISO Zone A Off-Peak LBMP Futures,FGHJKMNQUVXZ,CME/KB
+7Q,NYMEX,Mont Belvieu Natural Gasoline (OPIS) Futures,FGHJKMNQUVXZ,CME/7Q
+4L,NYMEX,NYISO Zone F 5 MW Peak Calendar-Month Day-Ahead LBMP Futures,HJKMNQUVXZ,CME/4L
+FI,NYMEX,1% Fuel Oil Cargoes FOB NWE (Platts) Crack Spread Futures,HJKMNQUVXZ,CME/FI
+MG,NYMEX,Gulf Coast No. 6 Fuel Oil (Platts) Crack Spread Futures,FGHJKMNQUVXZ,CME/MG
+TIO,NYMEX,Iron Ore 62% Fe CFR China (TSI) Futures,FGHJKMNQUVXZ,CME/TIO
+1NB,NYMEX,Singapore Mogas 92 Unleaded (Platts) Brent Crack Spread Futures,HJKMNQU,CME/1NB
+JR,CBT,Dow Jones Real Estate Futures,HMUZ,CME/JR
+YH,NYMEX,NY Heating Oil (Platts) vs. NY Harbor ULSD Futures,HJKMNQUV,CME/YH
+XN,NYMEX,SoCal Natural Gas (Platts IFERC) Fixed Price Futures,FGHJKMNQUVXZ,CME/XN
+MOD,NYMEX,PJM ATSI Zone 5 MW Off-Peak Calendar-Month Day-Ahead Futures,HJK,CME/MOD
+U4,NYMEX,ISO New England Rhode Island Zone 5 MW Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/U4
+A5,NYMEX,EIA Flat Tax On-Highway Diesel Futures,FGHJKMNQUVXZ,CME/A5
+LB,CME,Random Length Lumber Futures,FHKNUX,CME/LB
+NF,CME,Non-fat Dry Milk Futures,FGHJKMNQUVXZ,CME/NF
+Q5,NYMEX,NYISO Zone C 5 MW Peak Calendar-Month Day-Ahead LBMP Futures,FGHJKMNQUVXZ,CME/Q5
+DC,NYMEX,Dubai Crude Oil (Platts) Financial Futures,HJKMNQUVXZ,CME/DC
+EH,CBT,Ethanol Futures,FGHJKMNQUVXZ,CME/EH
+Z,CME,Euro/Polish Zloty Futures,HMUZ,CME/Z
+MEL,NYMEX,MISO Indiana Hub (formerly Cinergy Hub) Real-Time Peak Calendar-Month 2.5 MW Futures,FGHJKMNQUVXZ,CME/MEL
+P7,NYMEX,ISO New England North East Massachusetts Zone 5 MW Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/P7
+R6,NYMEX,ISO New England West Central Massachusetts Zone 5 MW Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/R6
+NW,NYMEX,Waha Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NW
+FS,NYMEX,1% Fuel Oil Cargoes FOB NWE (Platts) vs. 3.5% Fuel Oil Barges FOB Rdam (Platts) Futures,FGHJKMNQUVXZ,CME/FS
+QL,NYM,Coal Futures,FGHJKMNQUVXZ,CME/QL
+UM,NYMEX,PJM Northern Illinois Hub Real-Time Peak Calendar-Month 2.5 MW Futures,FGHJKMNQUVXZ,CME/UM
+DB,NYMEX,Brent Crude Oil vs. Dubai Crude Oil (Platts) Futures,FGHJKMNQUVXZ,CME/DB
+0F,NYMEX,Mini Singapore Fuel Oil 180 cst (Platts) Futures,HJKMNQUVXZ,CME/0F
+QG,NYMEX,E-mini Natural Gas Futures,FGHJKMNQUVXZ,CME/QG
+J2,NYMEX,PJM JCPL Zone Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/J2
+L4,NYMEX,Tennessee 800 Leg Natural Gas (Platts Gas Daily/Platts IFERC) Index Futures,H,CME/L4
+MNC,NYMEX,Mini European Naphtha CIF NWE (Platts) Futures,HJKMNQU,CME/MNC
+KH,NYMEX,NYISO Zone G Off-Peak LBMP Futures,FGHJKMNQUVXZ,CME/KH
+47,NYMEX,PJM METED Zone Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/47
+EW,NYMEX,East-West Fuel Oil Spread (Platts) Futures,FGHJKMNQUVXZ,CME/EW
+NYF,NYMEX,NY Fuel Oil 1.0% (Platts) vs. European 1% Fuel Oil Cargoes FOB NWE (Platts) Futures,HJKMNQU,CME/NYF
+NZ,NYMEX,Transco Zone 6 Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NZ
+SZ,NYMEX,Southern Natural Louisiana Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/SZ
+NH,NYM,Houston Ship Channel Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NH
+EJ,NYMEX,MISO Indiana Hub (formerly Cinergy Hub) Off-Peak LMP Futures,FGHJKMNQUVXZ,CME/EJ
+NJ,NYMEX,San Juan Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NJ
+NFN,NYMEX,MichCon Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/NFN
+XAU,CME,E-mini Utilities Sector Futures,HM,CME/XAU
+Y7,NYMEX,Tennessee 500 Leg Natural Gas (Platts Gas Daily/Platts IFERC) Index Futures,HJKMNQUV,CME/Y7
+9F,NYMEX,Texas Gas Zone 1 Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/9F
+Z1,NYMEX,Ethanol T2 FOB Rdam Including Duty (Platts) Futures,HJKMNQUVXZ,CME/Z1
+GE,NYMEX,Gulf Coast Jet Fuel (Platts) Futures,FGHJKMNQUVXZ,CME/GE
+S4,NYMEX,PJM APS Zone Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/S4
+DY,CME,Dry Whey Futures,FGHJKMNQUVXZ,CME/DY
+SSI,NYMEX,Coal (API 8) cfr South China (Argus/McCloskey) Futures,FGHJKMNQUVXZ,CME/SSI
+YW,CBT,Mini Wheat Futures,HKNUZ,CME/YW
+1R,NYMEX,Propane Non-LDH Mont Belvieu (OPIS) Futures,FGHJKMNQUVXZ,CME/1R
+MJN,NYMEX,Mini Japan C&F Naphtha (Platts) Futures,FGHJKMNQUVXZ,CME/MJN
+MBE,NYMEX,Mont Belvieu Spot Ethylene In-Well Futures,FGHJKMNQUVXZ,CME/MBE
+XAP,CME,E-mini Consumer Staples Sector Futures,HM,CME/XAP
+MNB,NYMEX,Mont Belvieu Normal Butane LDH (OPIS) Futures,FGHJKMNQUVXZ,CME/MNB
+5C,NYMEX,Chicago ULSD (Platts) vs. NY Harbor ULSD Futures,FGHJKMNQUVXZ,CME/5C
+XAK,CME,E-mini Technology Sector Futures,HM,CME/XAK
+SD,NYMEX,Singapore Fuel Oil 180 cst (Platts) vs. 380 cst (Platts) Futures,FGHJKMNQUVXZ,CME/SD
+7Y,NYMEX,NY ULSD (Argus) vs. NY Harbor ULSD Futures,FGHJKMNQUVXZ,CME/7Y
+PF,NYMEX,Ventura Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/PF
+8Z,NYMEX,Southern Star Tx.-Okla.-Kan. Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/8Z
+MBN,NYMEX,Mont Belvieu Ethylene (PCW) Financial Futures,FGHJKMNQUVXZ,CME/MBN
+BY,CME,British Pound/Japanese Yen Futures,HMUZ,CME/BY
+1U,NYMEX,NY Jet Fuel (Platts) vs. NY Harbor ULSD Futures,HJKMNQU,CME/1U
+PZ,CME,Polish Zloty Futures,HMUZ,CME/PZ
+6Z,NYMEX,Tennessee 800 Leg Natural Gas (Platts IFERC) Basis Futures,JKUVX,CME/6Z
+MGC,CEC,E-micro Gold Futures,GJMQVZ,CME/MGC
+BOB,NYMEX,3.5% Fuel Oil Barges FOB Rdam (Platts) Crack Spread (1000mt) Futures,FGHJKMNQUVXZ,CME/BOB
+TRY,CME,Turkish Lira Futures,HMUZ,CME/TRY
+UN,NYMEX,European Naphtha Cargoes CIF NWE (Platts) Futures,FGHJKMNQUVXZ,CME/UN
+PDM,NYMEX,MISO Indiana Hub Day-Ahead Peak Calendar-Month 5 MW Futures,FGHJKMNQUVXZ,CME/PDM
+71,CBT,Ethanol Forward Month Futures,FGHJKMNQUVXZ,CME/71
+4N,NYMEX,PJM PECO Zone 5 MW Peak Calendar-Month Day-Ahead LMP Futures,FGHJKMNQUVXZ,CME/4N
+GCI,NYMEX,Gulf Coast No.6 Fuel Oil 3.0% (Platts) Brent Crack Spread Futures,FGHJKMNQUVXZ,CME/GCI
+XAF,CME,E-mini Financial Sector Futures,HM,CME/XAF
+CNH,CME,Standard-Size USD/Offshore RMB (CNH) Futures,FGHJKMNQUVXZ,CME/CNH
+ARW,NYMEX,Gulf Coast Unl 87 Gasoline M1 (Platts) Crack Spread Futures,HJKMNQU,CME/ARW
+KK,NYMEX,NYISO Zone J Off-Peak LBMP Futures,FGHJKMNQUVXZ,CME/KK
+JS,NYMEX,Los Angeles Jet (OPIS) vs. NY Harbor ULSD Futures,HJKM,CME/JS
+XAY,CME,E-mini Consumer Discretionary Sector Futures,HM,CME/XAY
+MCC,NYMEX,Indonesian Coal (McCloskey sub-bituminous) Futures,FGHJKMNQUVXZ,CME/MCC
+FP,NYMEX,Florida Gas Zone 3 Natural Gas (Platts IFERC) Basis Futures,FGHJKMNQUVXZ,CME/FP
+WQ,NYMEX,Gasoil 0.1 Barges FOB Rdam (Platts) vs. Gasoil Futures,HJKMNQUVXZ,CME/WQ
+PC,NYMEX,PG&E Citygate Natural Gas (Platts IFERC) Basis Futures,JKMNQUVXZ,CME/PC
+J7,CME,E-mini Japanese Yen Futures,MU,CME/J7
+M6B,CME,E-micro British Pound/American Dollar Futures,MU,CME/M6B
+8I,NYMEX,Mont Belvieu Iso-Butane (OPIS) Futures,FGHJKMNQUVXZ,CME/8I

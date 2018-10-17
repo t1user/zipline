@@ -1,0 +1,7 @@
+data/
+logs/
+CME_metadata.csv
+CME_metadata.zip
+#*
+*~
+.#*
