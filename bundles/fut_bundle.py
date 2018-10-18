@@ -1,14 +1,16 @@
 import os
 import numpy  as np
 import pandas as pd
-from . import core as bundles
+from zipline.data.bundles import core as bundles
+from zipline.assets.futures import CME_CODE_TO_MONTH
 import sys
 from logbook import Logger, StreamHandler, FileHandler
 from tqdm import tqdm
 from six import iteritems
+import calendar as cal
 
 
-handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
+stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
 log = Logger(__name__)
 stream_handler.push_application()
 
@@ -61,7 +63,8 @@ def get_meta_df():
     """
     df = pd.read_csv('commodityfactsheet.csv', usecols=['SymbolCommercial', 'Name', 'Exchange', 'FullPointValue', 'MinimumTick'])
     df.rename(columns={'SymbolCommercial': 'root_symbol', 
-                       'Name': 'name', 
+                       'Name': 'name',
+                       'Exchange': 'exchange',
                        'FullPointValue': 'multiplier', 
                        'MinimumTick': 'tick_size'}, inplace=True)
     df['tick_size'] = df['tick_size'] / 100
@@ -71,6 +74,16 @@ def get_symbol(filename):
     # chop-off .csv extension
     return filename.split('.')[0]
 
+def get_expiration(symbol):
+    """
+    work in progress
+    returns 3 Friday of the expiration month
+    """
+    year = int(symbol[-4:])
+    month = int(CME_CODE_TO_MONTH[symbol[-5]])
+    c = cal.Calendar(firstweekday=cal.SATURDAY)
+    day = c.monthdatescalendar(year, month)[2][-1]
+    return '{}'.format(day)
 
 def load_data(path='data'):
     filelist = [s for s in os.listdir(path)]  
@@ -78,14 +91,19 @@ def load_data(path='data'):
     df_list = []
     for file in tqdm(filelist):
         df = pd.read_csv(os.path.join(path, file), parse_dates=[0])
+        
+        # quandl data has 3 different names for this column
+        oi = df.columns[8]
+        df.rename(columns={oi: 'open interest'}, inplace=True)
+        
         df['symbol'] = get_symbol(file)
+        df['close'] = df['Settle']
         df_list.append(df)
     big_df = pd.concat(df_list)
     big_df.columns = map(str.lower, big_df.columns)
     return big_df
-    
 
-def gen_asset_metadata(raw_data, show_progress):
+def gen_asset_metadata(raw_data, show_progress=True):
     if show_progress:
         log.info('Generating asset metadata.')
 
@@ -95,8 +113,9 @@ def gen_asset_metadata(raw_data, show_progress):
         {'date': [np.min, np.max]}
     )
 
+    data.reset_index(inplace=True)
     data.columns = data.columns.get_level_values(1)
-    data.rename(columns={'amin':'start_date', 'amax': 'end_date'}, inplace=True)  
+    data.rename(columns={'': 'symbol', 'amin':'start_date', 'amax': 'end_date'}, inplace=True)  
     data['first_traded'] = data['start_date']
 
     meta = get_meta_df()
@@ -106,8 +125,9 @@ def gen_asset_metadata(raw_data, show_progress):
     
     data['auto_close_date'] = data['end_date'] #+ pd.Timedelta(days=1)
     data['notice_date'] = data['auto_close_date']
+    data['expiration_date'] = data.symbol.apply(lambda x: get_expiration(x))
 
-    return data
+    return data.sort_values(by='auto_close_date').reset_index(drop=True)
     
 def parse_pricing_and_vol(data,
                           sessions,
@@ -120,7 +140,6 @@ def parse_pricing_and_vol(data,
             sessions.tz_localize(None)
         ).fillna(0.0)
         yield asset_id, asset_data    
-
 
 @bundles.register('futures')
 def futures_bundle(environ,
@@ -138,15 +157,16 @@ def futures_bundle(environ,
                    csvdir=None):
 
     
-    raw_data = load_data('-----')
-    asset_metadata = gen_asset_metadata(raw_data, False)
+    raw_data = load_data()
+    asset_metadata = gen_asset_metadata(raw_data)
     root_symbols = asset_metadata.root_symbol.unique()
     root_symbols = pd.DataFrame(root_symbols, columns = ['root_symbol'])
     root_symbols['root_symbol_id'] = root_symbols.index.values
     
-    root_symbols['sector'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['sector'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
+    root_symbols['sector'] = 'placeholder'
+    #[asset_metadata.loc[asset_metadata['root_symbol']==rs]['sector'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
     root_symbols['exchange'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['exchange'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
-    root_symbols['description'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['asset_name'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
+    root_symbols['description'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['name'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
     
     
     asset_db_writer.write(futures=asset_metadata, root_symbols=root_symbols)

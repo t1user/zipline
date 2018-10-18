@@ -55,6 +55,7 @@ if 'data' not in os.listdir():
     os.mkdir('data')
 
 def download_file(contract):
+    fail_counter = 0
     # data directory must be empty before starting script
     while '{}.csv'.format(contract) not in os.listdir('data'):
         try:
@@ -64,8 +65,13 @@ def download_file(contract):
             counter += 1
             log.info('wrote file no. {}: {}.csv'.format(counter, contract))
         except quandl.LimitExceededError:
-            log.info('Quadle rate limit exceeded, thread sleeping for 5s')
-            time.sleep(5)
+            fail_counter += 1
+            if fail_counter < 15:
+                log.info('Quadle rate limit exceeded, thread sleeping for 5s')
+                time.sleep(5)
+            else:
+                log.info('Seems you have exceeded quandl daily rate limit. Try again tommorrow.')
+                sys.exit()
 
 # used to count number of files downloaded    
 counter = 0
