@@ -9,7 +9,13 @@ import sys
 from datetime import datetime
 from logbook import Logger, StreamHandler, FileHandler
 import threading
+from windows_inhibitor import WindowsInhibitor
 
+
+# prevent windows from sleeping while script is running
+if os.name == 'nt':
+    osSleep = WindowsInhibitor()
+    osSleep.inhibit()
 
 if 'logs' not in os.listdir():
     os.mkdir('logs')
@@ -47,7 +53,9 @@ with ZipFile('CME_metadata.zip') as zip_file:
 # Download data for particular contracts
 contracts = pd.read_csv('CME_metadata.csv')
 # drop option codes which are mistakenly included in Quandl file
-contracts.drop(contracts[contracts['code'].str.len() > 9].index, inplace=True)
+contracts.drop(contracts[contracts['code'].str.len() > 8].index, inplace=True)
+# drop various indexes included in Quandl file
+contracts.drop(contracts[contracts['code'].str.contains('INDEX', regex=False) == True].index, inplace=True)
 contracts = contracts['code'].tolist()
 log.info('Number of files to download: {}'.format(len(contracts)))
 

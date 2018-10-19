@@ -8,12 +8,13 @@ from logbook import Logger, StreamHandler, FileHandler
 from tqdm import tqdm
 from six import iteritems
 import calendar as cal
+from bundles.symbol_mapper import Mapper
 
 
 stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
 log = Logger(__name__)
 stream_handler.push_application()
-
+mapper = Mapper()
 
 def csvdir_futures(tframes=None, csvdir=None):
     return CSVDIRFutures(tframes, csvdir).ingest
@@ -97,6 +98,17 @@ def load_data(path='data'):
         df.rename(columns={oi: 'open interest'}, inplace=True)
         
         df['symbol'] = get_symbol(file)
+
+        # assert that required columns exist in the file
+        required_columns = set(['Date', 'Open', 'High', 'Low', 'Last',
+                                'Change', 'Settle', 'Volume',
+                                'open interest', 'symbol'])
+        existing_columns = set(df.columns)
+        try:
+            assert required_columns.issubset(existing_columns)
+        except AssertionError:
+            log.error('Missing columns in file: {}'.format(file))
+        
         df['close'] = df['Settle']
         df_list.append(df)
     big_df = pd.concat(df_list)
@@ -122,6 +134,7 @@ def gen_asset_metadata(raw_data, show_progress=True):
     
     data['root_symbol'] = [s[:-5] for s in data.symbol.unique() ] 
     data = data.merge(meta, on='root_symbol')
+    data['root_symbol'].apply(lambda x: mapper.filter(x))
     
     data['auto_close_date'] = data['end_date'] #+ pd.Timedelta(days=1)
     data['notice_date'] = data['auto_close_date']
@@ -182,4 +195,8 @@ def futures_bundle(environ,
         ),
         show_progress=show_progress
     )
+    
+    mapper.save()
+
+
 
