@@ -100,6 +100,9 @@ for contract in contracts:
         log.info('Average: {}s'.format(np.mean(times)))
         t = time.time()
     
+while counter < len(contracts):
+    time.sleep(1)
+
 end = time.time()
 duration = end - start
 h = int(duration/3600)
