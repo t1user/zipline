@@ -1,7 +1,10 @@
 data/
+_data/
 logs/
 CME_metadata.csv
 CME_metadata.zip
 #*
 *~
 .#*
+.ipynb_checkpoints
+__pycache__

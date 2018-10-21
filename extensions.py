@@ -12,7 +12,7 @@ register(
         ['daily'],
         '../data',
     ),
-    calendar_name='CME',
+    calendar_name='NYSE',
     #start_session=start_session,
     #end_session=end_session
 )

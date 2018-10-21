@@ -91,7 +91,7 @@ def get_expiration(symbol):
     month = int(CME_CODE_TO_MONTH[symbol[-5]])
     c = cal.Calendar(firstweekday=cal.SATURDAY)
     day = c.monthdatescalendar(year, month)[2][-1]
-    return '{}'.format(day)
+    return pd.to_datetime('{}'.format(day))
 
 def load_data(path='data'):
     filelist = [s for s in os.listdir(path)]  
@@ -142,12 +142,16 @@ def gen_asset_metadata(raw_data, show_progress=True):
     data['root_symbol'] = [s[:-5] for s in data.symbol.unique() ] 
     data = data.merge(meta, on='root_symbol', how='left')
     #data['root_symbol'].apply(lambda x: mapper.filter(x))
-    
-    data['auto_close_date'] = data['end_date'] #+ pd.Timedelta(days=1)
-    data['notice_date'] = data['auto_close_date']
-    data['expiration_date'] = data.symbol.apply(lambda x: get_expiration(x))
 
-    return data.sort_values(by='auto_close_date').reset_index(drop=True)
+    # temporary workaround for expiration dates
+    d = data['end_date'].max() - pd.Timedelta(days=2)
+    data['active'] = data['end_date'] >= d
+    data['expiration_date'] = data[data['active']].symbol.apply(lambda x: get_expiration(x)).combine_first(
+        data[~data['active']]['end_date'])
+    
+    data['auto_close_date'] = data['expiration_date'] - pd.Timedelta(days=2)
+    data['notice_date'] = data['auto_close_date'] #- pd.Timedelta(days=1)
+    return data.sort_values(by='expiration_date').reset_index(drop=True)
     
 def parse_pricing_and_vol(data,
                           sessions,
