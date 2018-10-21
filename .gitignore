@@ -1,5 +1,6 @@
 data/
 _data/
+excel_meta/
 logs/
 CME_metadata.csv
 CME_metadata.zip
