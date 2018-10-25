@@ -28,8 +28,7 @@ file_handler.push_application()
 stream_handler.push_application()
 
 
-api_key = os.environ.get('QUANDL_API_KEY')
-quandl.ApiConfig.api_key = 'stBZDya6MDKyDMw4F4hg'
+quandl.ApiConfig.api_key = os.environ.get('QUANDL_API_KEY')
 
 # Download and unzip file with list of all available contracts
 # Files are being saved to working directory

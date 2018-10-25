@@ -62,18 +62,17 @@ def get_meta_df():
     Fetches metadata from csv file downloaded from csi.
     File commodityfactsheet.csv must be in the working directory.
     """
-    df = pd.read_csv('commodityfactsheet.csv', usecols=['SymbolCommercial', 'Name', 'Exchange', 'FullPointValue', 'MinimumTick'])
+    df = pd.read_csv('commodityfactsheet.csv', usecols=['SymbolCommercial', 'Name', 'FullPointValue', 'MinimumTick'])
     df.rename(columns={'SymbolCommercial': 'root_symbol', 
                        #'Name': 'name',
-                       'Exchange': 'exchange',
                        'FullPointValue': 'multiplier', 
                        'MinimumTick': 'tick_size'}, inplace=True)
     df['tick_size'] = df['tick_size'] / 100
     # rows with duplicated symbols are useless for further processing
     df.drop(df[df.root_symbol.duplicated()].index, inplace=True)
     # get proper contract names from quandl CME meta file
-    CME_df = pd.read_csv('CMEGroup.csv', usecols=[0, 2], header=None)
-    CME_df.columns=['root_symbol', 'name']
+    CME_df = pd.read_csv('CMEGroup.csv', usecols=[0, 1, 2], header=None)
+    CME_df.columns=['root_symbol', 'exchange', 'name']
     data = CME_df.merge(df, on='root_symbol', how='left')
     data.drop('Name', axis=1, inplace=True)
     return data
@@ -120,6 +119,7 @@ def load_data(path='data'):
         df_list.append(df)
     big_df = pd.concat(df_list)
     big_df.columns = map(str.lower, big_df.columns)
+
     return big_df
 
 def gen_asset_metadata(raw_data, show_progress=True):
@@ -139,18 +139,28 @@ def gen_asset_metadata(raw_data, show_progress=True):
 
     meta = get_meta_df()
     
-    data['root_symbol'] = [s[:-5] for s in data.symbol.unique() ] 
+    data['root_symbol'] = [s[:-5] for s in data.symbol.unique() ]
+    names = pd.read_csv('C:/Users/tomek/zipline/CME_metadata.csv',
+                        usecols = ['code', 'name'], index_col=['code'])
+    data['asset_name'] = data.symbol.apply(lambda x: names.loc[x].item())
     data = data.merge(meta, on='root_symbol', how='left')
+    # precede single character roots with _, eg. C (corn) becomes _C
+    data['root_symbol'] = data['root_symbol'].apply(lambda x: '_'+x if len(x)<2 else x)
+
     #data['root_symbol'].apply(lambda x: mapper.filter(x))
+
 
     # temporary workaround for expiration dates
     d = data['end_date'].max() - pd.Timedelta(days=2)
     data['active'] = data['end_date'] >= d
     data['expiration_date'] = data[data['active']].symbol.apply(lambda x: get_expiration(x)).combine_first(
         data[~data['active']]['end_date'])
-    
+
+    #data['expiration_date'] = data['end_date']
     data['auto_close_date'] = data['expiration_date'] - pd.Timedelta(days=2)
     data['notice_date'] = data['auto_close_date'] #- pd.Timedelta(days=1)
+    data['expiration_year'] = data.symbol.apply(lambda x: x[-4:])
+
     return data.sort_values(by='expiration_date').reset_index(drop=True)
     
 def parse_pricing_and_vol(data,
@@ -181,8 +191,12 @@ def futures_bundle(environ,
                    csvdir=None):
 
     
-    raw_data = load_data()
+    raw_data = load_data()   
     asset_metadata = gen_asset_metadata(raw_data)
+
+    # chop-off first two year digits from symbol, e.g. ESZ2018 becomes ESZ18 (actual CME symbol)
+    #asset_metadata['symbol'] = asset_metadata['symbol'].apply(lambda x: x[:-4] + x[-2:])
+
     root_symbols = asset_metadata.root_symbol.unique()
     root_symbols = pd.DataFrame(root_symbols, columns = ['root_symbol'])
     root_symbols['root_symbol_id'] = root_symbols.index.values
@@ -191,6 +205,8 @@ def futures_bundle(environ,
     #[asset_metadata.loc[asset_metadata['root_symbol']==rs]['sector'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
     root_symbols['exchange'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['exchange'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
     root_symbols['description'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['name'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
+
+    
     
     
     asset_db_writer.write(futures=asset_metadata, root_symbols=root_symbols)
