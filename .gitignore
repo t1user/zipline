@@ -2,6 +2,7 @@ data/
 _data/
 excel_meta/
 logs/
+debug/
 CME_metadata.csv
 CME_metadata.zip
 #*
