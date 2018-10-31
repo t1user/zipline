@@ -21,8 +21,9 @@ if 'logs' not in os.listdir():
     os.mkdir('logs')
 
 stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
-file_handler = FileHandler('logs/quandl_import_log_{}.log'.format(datetime.today().strftime("%Y-%m-%d_%H-%M")),
-                           format_string=" | {record.message}", bubble=True)
+file_handler = FileHandler('logs/quandl_import_log_{}.log'.format(
+    datetime.today().strftime("%Y-%m-%d_%H-%M")),
+    format_string=" | {record.message}", bubble=True)
 log = Logger(__name__)
 file_handler.push_application()
 stream_handler.push_application()
