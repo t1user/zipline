@@ -6,6 +6,10 @@ debug/
 CME_metadata.csv
 CME_metadata.zip
 CME_price_data.zip
+*.zip
+bundles/CME_price_data.zip
+bundles/expiration_dates.csv
+
 #*
 *~
 .#*

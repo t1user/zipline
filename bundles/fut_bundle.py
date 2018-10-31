@@ -5,14 +5,11 @@ import numpy  as np
 import pandas as pd
 from six import iteritems
 from io import BytesIO
-import calendar as cal
 import requests
 from zipfile import ZipFile
 import quandl
 from logbook import Logger, StreamHandler, FileHandler
-from tqdm import tqdm
 from zipline.data.bundles import core as bundles
-from zipline.assets.futures import CME_CODE_TO_MONTH
 from bundles.expiration_downloader import ExpirationDownloader
 
 
