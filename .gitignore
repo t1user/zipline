@@ -5,6 +5,7 @@ logs/
 debug/
 CME_metadata.csv
 CME_metadata.zip
+CME_price_data.zip
 #*
 *~
 .#*
