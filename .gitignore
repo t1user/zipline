@@ -1,5 +1,7 @@
 data/
 _data/
+__data/
+__pycache__/
 excel_meta/
 logs/
 debug/

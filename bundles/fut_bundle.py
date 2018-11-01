@@ -264,6 +264,13 @@ def futures_bundle(environ,
     root_symbols['exchange'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['exchange'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
     root_symbols['description'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['name'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
 
+    # create empty SQLite tables to prevent lookup errors in algorithms
+    divs_splits = {'divs': pd.DataFrame(columns=['sid', 'amount', 'ex_date', 'record_date',
+                                              'declared_date', 'pay_date']),
+                   'splits': pd.DataFrame(columns=['sid', 'ratio', 'effective_date'])}
+    adjustment_writer.write(splits=divs_splits['splits'], dividends=divs_splits['divs'])
+
+
     asset_db_writer.write(futures=asset_metadata, root_symbols=root_symbols)
 
     symbol_map = asset_metadata.symbol
