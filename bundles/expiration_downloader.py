@@ -22,19 +22,31 @@ log = Logger(__name__)
 #stream_handler.push_application()
 #file_handler.push_application()
 
+
 class ExpirationDownloader:
     """
     Download contract expiry dates from CME website.
-    Parameters: df: dataframe read from csv file downloaded from quandl
+    Parameters: 
+    df: dataframe read from csv file downloaded from quandl
+    download: False - use file from disk, True - download file form CME
+    show_progress: zipline variable to be passed by caller (or not)
+
+    calling without parameters: use file from disk
+
+    Attributes:
+    data: DataFrame with lookup table for expiration dates by contract symbol
+    
     """
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    FILENAME = os.path.join(BASE_DIR, 'expiration_dates.csv')
     downloaded_tables = []
     attempts = []
-    FILENAME = 'bundles/expiration_dates.csv'
-    # set to False to save time by using file from disk (if the file is available)
     counter = 0
         
-    def __init__(self, df=None, download=True):
-        self.data = df
+    def __init__(self, df=None, download=False, show_progress=False):
+        self.show_progress = show_progress
+        if df:
+            self.data = df.copy()
         self.router(download)
 
     def router(self, download):
@@ -48,7 +60,8 @@ class ExpirationDownloader:
                                         usecols=['expiration_date', 'symbol'],
                                         index_col=['symbol'],
                                         parse_dates=['expiration_date'])
-            log.info('Expiration dates were read from disc.')
+            if self.show_progress:
+                log.info('Expiration dates were read from disc.')
         
     def excel_downloader(self, root, url):
         """
@@ -118,7 +131,8 @@ class ExpirationDownloader:
         """
         Get excel tables for all root symbols and process them into workable DataFrame.
         """
-        log.info('Downloading expiration dates from CME website')
+        if self.show_progress:
+            log.info('Downloading expiration dates from CME website')
         self.get_specs()
         df_list = []
         for row in self.data.iterrows():

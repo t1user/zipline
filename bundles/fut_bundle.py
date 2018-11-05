@@ -18,15 +18,19 @@ log = Logger(__name__)
 
 # set to False to use files from disk instead of downloading
 # files listed below must exist
-# all files are typically saved to disk first time the bundle is
-# run with DOWNLOAD=True
+# all files are saved to disk when bundle is run with DOWNLOAD=True
+# so they will be available if bundle has been run before
 DOWNLOAD = True
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # filename for data downloaded from Quandl
-QUANDL_ZIP_FILE = 'bundles/CME_price_data.zip'
+QUANDL_ZIP_FILE = os.path.join(BASE_DIR, 'CME_price_data.zip')
 # This file must contain: multiplier, tick_size, sector, sub-sector
 # for every root symbol
-META_FILE = 'bundles/meta.csv'
-QUANDL_SPECS_FILE='bundles/CME_metadata.csv'
+META_FILE = os.path.join(BASE_DIR, 'meta.csv')
+# meta data from Quandl
+QUANDL_SPECS_FILE = os.path.join(BASE_DIR, 'CME_metadata.csv')
 
 
 def csvdir_futures(tframes=None, csvdir=None):
@@ -261,7 +265,7 @@ def futures_bundle(environ,
     quandl.ApiConfig.api_key = api_key
 
     quandl_specs = fetch_quandl_specs_table(api_key, DOWNLOAD, show_progress)
-    expiration = ExpirationDownloader(quandl_specs, DOWNLOAD)
+    expiration = ExpirationDownloader(quandl_specs, DOWNLOAD, show_progress)
 
     raw_data = fetch_data_table(
         DOWNLOAD,
