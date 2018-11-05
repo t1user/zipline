@@ -1,4 +1,3 @@
-
 import os
 import sys
 import numpy  as np
@@ -67,16 +66,16 @@ class CSVDIRFutures:
                        self.csvdir)
 
         
-def get_meta_df():
+def get_meta_df(file=META_FILE):
     """
     Fetch metadata from csv file based on modified quandl supplied meta file.
 
     """
-    return pd.read_csv(META_FILE, usecols=['root_symbol', 'name', 'exchange', 'multiplier',
+    return pd.read_csv(file, usecols=['root_symbol', 'name', 'exchange', 'multiplier',
                                          'tick_size', 'sector', 'sub_sector',])
     
 def load_data_table(file,
-                    index_col,
+                    index_col=None,
                     show_progress=False):
     """ Load data table from zip file provided by Quandl.
     """
@@ -114,6 +113,8 @@ def load_data_table(file,
     # placeholders were only relevant for rows with option data, which are now removed
     del df['x']
     del df['y']
+    # temporary fix
+    #df['symbol'].str.replace('^JY', 'JJ')
     return df
 
     
@@ -152,11 +153,18 @@ def fetch_quandl_specs_table(api_key, show_progress=False):
     r = requests.get('https://www.quandl.com/api/v3/databases/CME/metadata?api_key={}'
                      .format(api_key))
     r.raise_for_status()
-    return pd.read_csv(BytesIO(r.content), compression='zip',
+    df =  pd.read_csv(BytesIO(r.content), compression='zip',
                        parse_dates=['from_date', 'to_date'])
+    # temporary test
+    #df['code'].str.replace('^JY', 'JJ')
+    return df
 
 
-def gen_asset_metadata(raw_data, quandl_specs, expiration, show_progress=False):
+def gen_asset_metadata(raw_data,
+                       quandl_specs,
+                       expiration,
+                       show_progress=False,
+                       meta_file=META_FILE):
     if show_progress:
         log.info('Generating asset metadata')
 
@@ -172,7 +180,7 @@ def gen_asset_metadata(raw_data, quandl_specs, expiration, show_progress=False):
                 inplace=True)  
     data['first_traded'] = data['start_date']
 
-    meta = get_meta_df()
+    meta = get_meta_df(meta_file)
     
     data['root_symbol'] = [s[:-5] for s in data.symbol.unique() ]
     names = quandl_specs['name']
@@ -188,18 +196,30 @@ def gen_asset_metadata(raw_data, quandl_specs, expiration, show_progress=False):
     # precede single character roots with _, eg. C (corn) becomes _C
     data['root_symbol'] = data['root_symbol'].apply(lambda x: '_' + x if len(x) < 2 else x)
 
-    # extract expiration dates
-    d = data['end_date'].max() - pd.Timedelta(days=2)
-    data['active'] = data['end_date'] >= d
-    # expired contracts have data up to expiration date
-    data['expiration_date'] = data[data['active']].symbol.apply(
-        lambda x: expiration.get_date(x)).combine_first(
-        data[~data['active']]['end_date'])
-    data['auto_close_date'] = data['expiration_date'] - pd.Timedelta(days=2)
-    data['notice_date'] = data['auto_close_date'] #- pd.Timedelta(days=1)
-    data['expiration_year'] = data.symbol.apply(lambda x: x[-4:])
+    #data['expiration_date'] = data.symbol.apply(lambda x: expiration.get_date(x)) | data['end_date']
+    #data['expiration_date'] = data['end_date'].combine(expiration.data, lambda x1, x2: x2 or x1)
 
-    return data.sort_values(by=['expiration_date', 'expiration_year', 'symbol']).reset_index(drop=True)
+    # DataFrame for mapping expiry dates, which uses data read from CME website where available
+    # if not available: end_date
+    end_dates = pd.DataFrame(data['end_date'], index=data['symbol'])
+    end_dates.rename(columns={'end_date': 'expiration_date'}, inplace=True)
+    expiration_dates = expiration.data.combine_first(end_dates)
+
+    data['expiration_date'] = data.symbol.map(expiration_dates.expiration_date)
+    
+    # extract expiration dates
+    #d = data['end_date'].max() - pd.Timedelta(days=2)
+    #data['active'] = data['end_date'] >= d
+    # expired contracts have data up to expiration date
+    #data['expiration_date'] = data[data['active']].symbol.apply(
+    #    lambda x: expiration.get_date(x)).combine_first(
+    #    data[~data['active']]['end_date'])
+    data['auto_close_date'] = data['expiration_date'] + pd.Timedelta(days=1)
+    data['notice_date'] = data['expiration_date']  - pd.Timedelta(days=1)
+    #data['expiration_year'] = data.symbol.apply(lambda x: x[-4:])
+    #, 'expiration_year', 'symbol']
+
+    return data.sort_values(by=['auto_close_date']).reset_index(drop=True)
 
 
 def parse_pricing_and_vol(data,
@@ -248,9 +268,6 @@ def futures_bundle(environ,
                                         quandl_specs,
                                         expiration,
                                         show_progress)
-
-    # chop-off first two year digits from symbol, e.g. ESZ2018 becomes ESZ18 (actual CME symbol)
-    #asset_metadata['symbol'] = asset_metadata['symbol'].apply(lambda x: x[:-4] + x[-2:])
 
     root_symbols = asset_metadata.root_symbol.unique()
     root_symbols = pd.DataFrame(root_symbols, columns = ['root_symbol'])

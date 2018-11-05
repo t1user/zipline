@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import time
 import calendar as cal
 from io import BytesIO
 from datetime import datetime
@@ -27,8 +28,11 @@ class ExpirationDownloader:
     Parameters: df: dataframe read from csv file downloaded from quandl
     """
     downloaded_tables = []
+    attempts = []
     FILENAME = 'bundles/expiration_dates.csv'
-    ALWAYS_DOWNLOAD = True
+    # set to False to save time by using file from disk (if the file is available)
+    ALWAYS_DOWNLOAD = False
+    counter = 0
         
     def __init__(self, df):
         df = df.copy()
@@ -51,32 +55,39 @@ class ExpirationDownloader:
         df['description'] = df['description'].str.replace(
             '/mac-swap-futures/', '/swap-futures/')
 
-        df['year'] = df.code.apply(lambda x: x[-4:])
+        #df['year'] = df.code.apply(lambda x: x[-4:])
         df['root_symbol'] = df.code.apply(lambda x: x[:-5])
         df.rename(columns={'code': 'symbol'}, inplace=True)
         df['exch_symbol'] = df['symbol'].apply(lambda x: x[:-4] + x[-2:])
-        df = df[df['year'] > '2018']
+        #df = df[df['year'] > '2018']
         # Filter out non-active contracts (they don't need updating)
         cutoff_date = df['to_date'].max() - pd.Timedelta(days=2)
         df = df[df['to_date'] >= cutoff_date]
         self.data = df
         self.router()
-        self.save_to_file()
+
 
     def router(self):
         """
-        Determine whether data should be downloaded or read from disc.
+        Determine whether data should be downloaded or read from disk.
         """
-        if self.FILENAME in os.listdir() and not self.ALWAYS_DOWNLOAD:
-            log.info('File was read from disc. Remove {} if you want to download new data from CME website'.format(
-                self.FILENAME))
-            return pd.read_csv(self.FILENAME)
-        else:
-            self.get_data()
+        file = os.path.basename(self.FILENAME)
+        dir = os.path.dirname(self.FILENAME)
+        if dir in os.listdir():
+            if file in os.listdir(dir) and not self.ALWAYS_DOWNLOAD:
+                log.info(
+                    'File was read from disc. Remove {} if you want to download new data from CME website'.format(
+                        self.FILENAME))
+                self.data = pd.read_csv(self.FILENAME,
+                                        usecols=['expiration_date', 'symbol'],
+                                        index_col=['symbol'],
+                                        parse_dates=['expiration_date'])
+                return
+        self.get_data()
         
     def excel_downloader(self, root, url):
         """
-        Dowload excel file with expiration dates and save on disk.
+        Dowload excel file with expiration dates from CME website.
         """
         # get excel file link
         try:
@@ -86,25 +97,42 @@ class ExpirationDownloader:
             link = r.html.find('.cmeButtonDownloadExcel', first=True).links.pop()
         except Exception as e:
             log.warn('Failed to download calendar page: {}, error: {}'.format(url, e))
+            if r.status_code == 403:
+                log.error('CME temporarily blocked your access to their website due to too many requests. Try again in 15 minutes.')
+                sys.exit()
             return
         
         a = requests.get('https://www.cmegroup.com{}'.format(link))
         try:
             a.raise_for_status()
+            table =  pd.read_excel(BytesIO(a.content), header=3)
+            # change root symbols used by CME to Quandl roots
+            table['Product Code'] = table['Product Code'].apply(lambda x: root + x[-3:])
+            # remember which symbols have already been downloaded to prevent another request
+            self.downloaded_tables.append(root)
+
+            return table
         except:
             log.warn('Failed to download excel file: {}, error: {}'.format(link, a.status_code))
-        self.downloaded_tables.append(root)
-
-        return pd.read_excel(BytesIO(a.content), header=3)
     
     def get_data(self):
-        log.info('Downloading contract expiration dates from CME website')
+        """
+        Get excel tables for all root symbols and process them into workable DataFrame.
+        """
+        log.info('Downloading expiration dates from CME website')
         df_list = []
         for row in self.data.iterrows():
-            if row[1][7] in self.downloaded_tables:
+            if row[1][6] in self.downloaded_tables:
                 continue
             else:
-                df_list.append(self.excel_downloader(row[1][7], row[1][2]))
+                self.attempts.append(row[1][6])
+                self.counter += 1
+                if self.counter > 250:
+                    # prevent CME website auto-ban
+                    time.sleep(10)
+                    self.counter = 0
+                df_list.append(self.excel_downloader(row[1][6], row[1][2]))
+
         
         big_df = pd.concat(df_list)
         big_df.columns = map(str.lower, big_df.columns)
@@ -113,11 +141,13 @@ class ExpirationDownloader:
         self.data = self.data.merge(big_df, on='exch_symbol', how='inner')
         self.data.rename(columns={'last trade': 'expiration_date'}, inplace=True)
         self.data['expiration_date'] = self.data['expiration_date'].astype('datetime64[ns]')
+        self.data.index = self.data.symbol
         self.data.drop(['first holding', 'last holding', 'first position', 'last position',
                         'first notice', 'last notice', 'first delivery',
                         'last delivery', 'name', 'description', 'refreshed_at',
-                        'from_date', 'to_date', 'year', 'root_symbol', 'exch_symbol',
-                        'contract month', 'first trade', 'settlement'], axis=1, inplace=True)
+                        'from_date', 'to_date', 'root_symbol', 'exch_symbol',
+                        'contract month', 'first trade', 'settlement', 'symbol'], axis=1, inplace=True)
+        self.save_to_file()
                        
     def save_to_file(self):
         try:
@@ -126,7 +156,7 @@ class ExpirationDownloader:
             log.error('File expiration_dates.csv is open. New file will not be saved to disc')
         except:
             log.error('Unknown error. File with expiry dates will not be saved to disc')
-            pass
+
           
     @staticmethod
     def third_friday(symbol):
@@ -149,6 +179,5 @@ class ExpirationDownloader:
         try:
             return self.data.loc[symbol,'expiration_date']
         except KeyError:
-            #log.error('key value: {}'.format(symbol))
             return self.third_friday(symbol)
 

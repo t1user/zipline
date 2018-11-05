@@ -37,4 +37,4 @@ from CLI:
 zipline ingest -b futures
 
 
-The whole ingestion process takes almost 2 hours. 
+The whole ingestion process takes almost 2 hours (on a fairly decent machine). 
