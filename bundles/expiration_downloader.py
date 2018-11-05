@@ -31,59 +31,24 @@ class ExpirationDownloader:
     attempts = []
     FILENAME = 'bundles/expiration_dates.csv'
     # set to False to save time by using file from disk (if the file is available)
-    ALWAYS_DOWNLOAD = False
     counter = 0
         
-    def __init__(self, df):
-        df = df.copy()
-        # delete irrelevant data
-        df.drop(df[
-           df['description'].str.contains('Dataset description', regex=False) == True
-        ].index, inplace=True)
-        # drop various indexes included in Quandl file
-        df.drop(df[df['code'].str.contains('INDEX', regex=False) == True].index, inplace=True)
-
-        # extract url from description field
-        df['description'] = df['description'].apply(
-            lambda x: x.split('<a href=')[-1].split('>http')[0].strip())
-
-        # change the url to get calendar data instead of contract specs
-        df['description'] = df['description'].str.replace(
-            'contract_specifications', 'product_calendar_futures')
-
-        # fix an error in urls in quandl meta data file:
-        df['description'] = df['description'].str.replace(
-            '/mac-swap-futures/', '/swap-futures/')
-
-        #df['year'] = df.code.apply(lambda x: x[-4:])
-        df['root_symbol'] = df.code.apply(lambda x: x[:-5])
-        df.rename(columns={'code': 'symbol'}, inplace=True)
-        df['exch_symbol'] = df['symbol'].apply(lambda x: x[:-4] + x[-2:])
-        #df = df[df['year'] > '2018']
-        # Filter out non-active contracts (they don't need updating)
-        cutoff_date = df['to_date'].max() - pd.Timedelta(days=2)
-        df = df[df['to_date'] >= cutoff_date]
+    def __init__(self, df=None, download=True):
         self.data = df
-        self.router()
+        self.router(download)
 
-
-    def router(self):
+    def router(self, download):
         """
         Determine whether data should be downloaded or read from disk.
         """
-        file = os.path.basename(self.FILENAME)
-        dir = os.path.dirname(self.FILENAME)
-        if dir in os.listdir():
-            if file in os.listdir(dir) and not self.ALWAYS_DOWNLOAD:
-                log.info(
-                    'File was read from disc. Remove {} if you want to download new data from CME website'.format(
-                        self.FILENAME))
-                self.data = pd.read_csv(self.FILENAME,
+        if download:
+            self.get_data()
+        else:
+            self.data = pd.read_csv(self.FILENAME,
                                         usecols=['expiration_date', 'symbol'],
                                         index_col=['symbol'],
                                         parse_dates=['expiration_date'])
-                return
-        self.get_data()
+            log.info('Expiration dates were read from disc.')
         
     def excel_downloader(self, root, url):
         """
@@ -115,11 +80,46 @@ class ExpirationDownloader:
         except:
             log.warn('Failed to download excel file: {}, error: {}'.format(link, a.status_code))
     
+    def get_specs(self):
+        """Process Quandl specs into workable DataFrame.
+        """
+        df = self.data
+        # delete irrelevant data
+        df.drop(df[
+           df['description'].str.contains('Dataset description', regex=False) == True
+        ].index, inplace=True)
+        # drop various indexes included in Quandl file
+        df.drop(df[df['code'].str.contains('INDEX', regex=False) == True].index, inplace=True)
+
+        # extract url from description field
+        df['description'] = df['description'].apply(
+            lambda x: x.split('<a href=')[-1].split('>http')[0].strip())
+
+        # change the url to get calendar data instead of contract specs
+        df['description'] = df['description'].str.replace(
+            'contract_specifications', 'product_calendar_futures')
+
+        # fix an error in urls in quandl meta data file:
+        df['description'] = df['description'].str.replace(
+            '/mac-swap-futures/', '/swap-futures/')
+
+        #df['year'] = df.code.apply(lambda x: x[-4:])
+        df['root_symbol'] = df.code.apply(lambda x: x[:-5])
+        df.rename(columns={'code': 'symbol'}, inplace=True)
+        df['exch_symbol'] = df['symbol'].apply(lambda x: x[:-4] + x[-2:])
+        #df = df[df['year'] > '2018']
+        # Filter out non-active contracts (they don't need updating)
+        cutoff_date = df['to_date'].max() - pd.Timedelta(days=2)
+        df = df[df['to_date'] >= cutoff_date]
+        self.data = df
+
+
     def get_data(self):
         """
         Get excel tables for all root symbols and process them into workable DataFrame.
         """
         log.info('Downloading expiration dates from CME website')
+        self.get_specs()
         df_list = []
         for row in self.data.iterrows():
             if row[1][6] in self.downloaded_tables:

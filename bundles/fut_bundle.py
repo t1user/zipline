@@ -16,12 +16,17 @@ stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", 
 log = Logger(__name__)
 #stream_handler.push_application()
 
-
+# set to False to use files from disk instead of downloading
+# files listed below must exist
+# all files are typically saved to disk first time the bundle is
+# run with DOWNLOAD=True
+DOWNLOAD = True
 # filename for data downloaded from Quandl
 QUANDL_ZIP_FILE = 'bundles/CME_price_data.zip'
 # This file must contain: multiplier, tick_size, sector, sub-sector
 # for every root symbol
 META_FILE = 'bundles/meta.csv'
+QUANDL_SPECS_FILE='bundles/CME_metadata.csv'
 
 
 def csvdir_futures(tframes=None, csvdir=None):
@@ -67,11 +72,11 @@ class CSVDIRFutures:
 
         
 def get_meta_df(file=META_FILE):
-    """
-    Fetch metadata from csv file based on modified quandl supplied meta file.
+    """Fetch metadata from csv file based on modified quandl supplied meta file.
 
     """
-    return pd.read_csv(file, usecols=['root_symbol', 'name', 'exchange', 'multiplier',
+    return pd.read_csv(file,
+                       usecols=['root_symbol', 'name', 'exchange', 'multiplier',
                                          'tick_size', 'sector', 'sub_sector',])
     
 def load_data_table(file,
@@ -113,51 +118,48 @@ def load_data_table(file,
     # placeholders were only relevant for rows with option data, which are now removed
     del df['x']
     del df['y']
-    # temporary fix
-    #df['symbol'].str.replace('^JY', 'JJ')
     return df
 
     
-def fetch_data_table(show_progress, retries):
+def fetch_data_table(download=True, show_progress=False, retries=5):
     """ Fetch CME data table from Quandl
     """
-    for _ in range(retries):
-        try:
-            if show_progress:
-                log.info('Downloading CME data')
-
-            quandl.bulkdownload('CME', filename=QUANDL_ZIP_FILE)
-                
-            return load_data_table(
-                file=QUANDL_ZIP_FILE,
-                index_col=None,
-                show_progress=show_progress,
-                )
-
-        except Exception:
-            log.exception("Exception raised reading Quandl data. Retrying.")
-
-    else:
-        raise ValueError(
-            "Failed to download Quandl data after %d attempts." % (retries)
+    if download:
+        for _ in range(retries):
+            try:
+                if show_progress:
+                    log.info('Downloading CME data')
+                    quandl.bulkdownload('CME', filename=QUANDL_ZIP_FILE)
+            except Exception:
+                log.exception("Exception raised reading Quandl data. Retrying.")
+        else:
+            raise ValueError(
+                "Failed to download Quandl data after %d attempts." % (retries)
+            )
+    return load_data_table(
+        file=QUANDL_ZIP_FILE,
+        index_col=None,
+        show_progress=show_progress,
         )
 
 
-def fetch_quandl_specs_table(api_key, show_progress=False):
+def fetch_quandl_specs_table(api_key, download=True, show_progress=False):
     """
     Return quandl spec file with a list of all available contracts.
     """
-    if show_progress:
-        log.info('Downloading metadata file from Quandl')
+    if download:
+        if show_progress:
+            log.info('Downloading metadata file from Quandl')
 
-    r = requests.get('https://www.quandl.com/api/v3/databases/CME/metadata?api_key={}'
-                     .format(api_key))
-    r.raise_for_status()
-    df =  pd.read_csv(BytesIO(r.content), compression='zip',
-                       parse_dates=['from_date', 'to_date'])
-    # temporary test
-    #df['code'].str.replace('^JY', 'JJ')
-    return df
+        r = requests.get('https://www.quandl.com/api/v3/databases/CME/metadata?api_key={}'
+                         .format(api_key))
+        r.raise_for_status()
+        df =  pd.read_csv(BytesIO(r.content), compression='zip',
+                          parse_dates=['from_date', 'to_date'])
+        df.to_csv(QUANDL_SPECS_FILE, index=False)
+        return df
+    else:
+        return pd.read_csv(QUANDL_SPECS_FILE, parse_dates=['from_date', 'to_date'])
 
 
 def gen_asset_metadata(raw_data,
@@ -201,7 +203,8 @@ def gen_asset_metadata(raw_data,
 
     # DataFrame for mapping expiry dates, which uses data read from CME website where available
     # if not available: end_date
-    end_dates = pd.DataFrame(data['end_date'], index=data['symbol'])
+    end_dates = pd.DataFrame(data['end_date'])
+    end_dates.index = data['symbol']
     end_dates.rename(columns={'end_date': 'expiration_date'}, inplace=True)
     expiration_dates = expiration.data.combine_first(end_dates)
 
@@ -257,17 +260,19 @@ def futures_bundle(environ,
         )
     quandl.ApiConfig.api_key = api_key
 
-    quandl_specs = fetch_quandl_specs_table(api_key, show_progress)
-    expiration = ExpirationDownloader(quandl_specs)
+    quandl_specs = fetch_quandl_specs_table(api_key, DOWNLOAD, show_progress)
+    expiration = ExpirationDownloader(quandl_specs, DOWNLOAD)
 
     raw_data = fetch_data_table(
+        DOWNLOAD,
         show_progress,
         environ.get('QUANDL_DOWNLOAD_ATTEMPTS', 5)
     )
     asset_metadata = gen_asset_metadata(raw_data[['symbol', 'date']],
                                         quandl_specs,
                                         expiration,
-                                        show_progress)
+                                        show_progress,
+                                        META_FILE)
 
     root_symbols = asset_metadata.root_symbol.unique()
     root_symbols = pd.DataFrame(root_symbols, columns = ['root_symbol'])
