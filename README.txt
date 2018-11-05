@@ -1,7 +1,9 @@
 Custom bundle for ingesting Quandl CME futures data (https://www.quandl.com/data/CME-Chicago-Mercantile-Exchange-Futures-Data) into zipline (https://www.zipline.io/)
 
+settings.py in bundles directory allows to select contracts for which data is to be ingested and whether data should be downloaded or read from disk.
+
 Note:
-Some zipline functions don't work with single character futures symbols so they have been preceded with underscore, so C (corn) becomes _C
+Some zipline functions don't work with single character futures symbols so they have been preceded with underscore, eg. C (corn) becomes _C
 
 
 Requirements:
@@ -37,4 +39,4 @@ from CLI:
 zipline ingest -b futures
 
 
-The whole ingestion process takes almost 2 hours (on a fairly decent machine). 
+

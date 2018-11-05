@@ -10,17 +10,12 @@ import quandl
 from logbook import Logger, StreamHandler, FileHandler
 from zipline.data.bundles import core as bundles
 from bundles.expiration_downloader import ExpirationDownloader
+from bundles.settings import DOWNLOAD, contracts
 
 
 stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
 log = Logger(__name__)
 #stream_handler.push_application()
-
-# set to False to use files from disk instead of downloading
-# files listed below must exist
-# all files are saved to disk when bundle is run with DOWNLOAD=True
-# so they will be available if bundle has been run before
-DOWNLOAD = True
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -122,6 +117,14 @@ def load_data_table(file,
     # placeholders were only relevant for rows with option data, which are now removed
     del df['x']
     del df['y']
+
+    if contracts:
+        # filter only contracts chosen in settings.py
+        df['root'] = df['symbol'].apply(lambda x: x[:-5])
+        df = df[df['root'].isin(contracts)]
+        del df['root']
+        df.reset_index(drop=True, inplace=True)
+
     return df
 
     
@@ -140,6 +143,10 @@ def fetch_data_table(download=True, show_progress=False, retries=5):
             raise ValueError(
                 "Failed to download Quandl data after %d attempts." % (retries)
             )
+    else:
+        if show_progress:
+            log.info('Reading CME data from disk')
+            
     return load_data_table(
         file=QUANDL_ZIP_FILE,
         index_col=None,
@@ -188,7 +195,7 @@ def gen_asset_metadata(raw_data,
 
     meta = get_meta_df(meta_file)
     
-    data['root_symbol'] = [s[:-5] for s in data.symbol.unique() ]
+    data['root_symbol'] = [s[:-5] for s in data.symbol.unique()]
     names = quandl_specs['name']
     names.index = quandl_specs['code']
     data['asset_name'] = data.symbol.apply(lambda x: names.loc[x])
@@ -202,9 +209,6 @@ def gen_asset_metadata(raw_data,
     # precede single character roots with _, eg. C (corn) becomes _C
     data['root_symbol'] = data['root_symbol'].apply(lambda x: '_' + x if len(x) < 2 else x)
 
-    #data['expiration_date'] = data.symbol.apply(lambda x: expiration.get_date(x)) | data['end_date']
-    #data['expiration_date'] = data['end_date'].combine(expiration.data, lambda x1, x2: x2 or x1)
-
     # DataFrame for mapping expiry dates, which uses data read from CME website where available
     # if not available: end_date
     end_dates = pd.DataFrame(data['end_date'])
@@ -214,17 +218,8 @@ def gen_asset_metadata(raw_data,
 
     data['expiration_date'] = data.symbol.map(expiration_dates.expiration_date)
     
-    # extract expiration dates
-    #d = data['end_date'].max() - pd.Timedelta(days=2)
-    #data['active'] = data['end_date'] >= d
-    # expired contracts have data up to expiration date
-    #data['expiration_date'] = data[data['active']].symbol.apply(
-    #    lambda x: expiration.get_date(x)).combine_first(
-    #    data[~data['active']]['end_date'])
-    data['auto_close_date'] = data['expiration_date'] + pd.Timedelta(days=1)
-    data['notice_date'] = data['expiration_date']  - pd.Timedelta(days=1)
-    #data['expiration_year'] = data.symbol.apply(lambda x: x[-4:])
-    #, 'expiration_year', 'symbol']
+    data['auto_close_date'] = data['expiration_date'] - pd.Timedelta(days=2)
+    data['notice_date'] = data['auto_close_date']
 
     return data.sort_values(by=['auto_close_date']).reset_index(drop=True)
 
@@ -270,7 +265,7 @@ def futures_bundle(environ,
     raw_data = fetch_data_table(
         DOWNLOAD,
         show_progress,
-        environ.get('QUANDL_DOWNLOAD_ATTEMPTS', 5)
+        environ.get('QUANDL_DOWNLOAD_ATTEMPTS', 5),
     )
     asset_metadata = gen_asset_metadata(raw_data[['symbol', 'date']],
                                         quandl_specs,

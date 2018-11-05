@@ -45,7 +45,7 @@ class ExpirationDownloader:
         
     def __init__(self, df=None, download=False, show_progress=False):
         self.show_progress = show_progress
-        if df:
+        if df is not None:
             self.data = df.copy()
         self.router(download)
 
@@ -61,7 +61,7 @@ class ExpirationDownloader:
                                         index_col=['symbol'],
                                         parse_dates=['expiration_date'])
             if self.show_progress:
-                log.info('Expiration dates were read from disc.')
+                log.info('Expiration dates read from disc.')
         
     def excel_downloader(self, root, url):
         """
