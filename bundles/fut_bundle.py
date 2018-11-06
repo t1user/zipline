@@ -28,50 +28,9 @@ META_FILE = os.path.join(BASE_DIR, 'meta.csv')
 QUANDL_SPECS_FILE = os.path.join(BASE_DIR, 'CME_metadata.csv')
 
 
-def csvdir_futures(tframes=None, csvdir=None):
-    return CSVDIRFutures(tframes, csvdir).ingest
 
-
-class CSVDIRFutures:
-    """
-    Wrapper class to call csvdir_bundle with provided
-    list of time frames and a path to the csvdir directory
-    """
-
-    def __init__(self, tframes, csvdir):
-        self.tframes = tframes
-        self.csvdir = csvdir
-
-    def ingest(self,
-               environ,
-               asset_db_writer,
-               minute_bar_writer,
-               daily_bar_writer,
-               adjustment_writer,
-               calendar,
-               start_session,
-               end_session,
-               cache,
-               show_progress,
-               output_dir):
-
-        futures_bundle(environ,
-                       asset_db_writer,
-                       minute_bar_writer,
-                       daily_bar_writer,
-                       adjustment_writer,
-                       calendar,
-                       start_session,
-                       end_session,
-                       cache,
-                       show_progress,
-                       output_dir,
-                       self.tframes,
-                       self.csvdir)
-
-        
 def get_meta_df(file=META_FILE):
-    """Fetch metadata from csv file based on modified quandl supplied meta file.
+    """Fetch metadata from csv file, which is based on modified quandl supplied meta file.
 
     """
     return pd.read_csv(file,
@@ -101,9 +60,9 @@ def load_data_table(file,
                     'open',
                     'high',
                     'low',
-                    'close',
+                    'end',
                     'change',
-                    'settle',
+                    'close',
                     'volume',
                     'open_interest',
                     'x', # placeholder to ensure parsing without errors
@@ -218,8 +177,8 @@ def gen_asset_metadata(raw_data,
 
     data['expiration_date'] = data.symbol.map(expiration_dates.expiration_date)
     
-    data['auto_close_date'] = data['expiration_date'] - pd.Timedelta(days=2)
-    data['notice_date'] = data['auto_close_date']
+    data['auto_close_date'] = data['expiration_date'] 
+    data['notice_date'] = data['auto_close_date']- pd.Timedelta(days=2)
 
     return data.sort_values(by=['auto_close_date']).reset_index(drop=True)
 
@@ -247,10 +206,8 @@ def futures_bundle(environ,
                    end_session,
                    cache,
                    show_progress,
-                   output_dir,
-                   tframes=None,
-                   csvdir=None):
-    
+                   output_dir):
+
     
     api_key = environ.get('QUANDL_API_KEY')
     if api_key is None:

@@ -18,8 +18,8 @@ DOWNLOAD = True
 
 # list of symbols to ingest
 # set to empty list to ingest all available symbols
+contracts = ['ES', 'GC', 'JY', 'CL']
 contracts = []
-
 
 # This is a set of the most active contracts on CME
 # Unconmment to use

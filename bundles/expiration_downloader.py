@@ -61,7 +61,7 @@ class ExpirationDownloader:
                                         index_col=['symbol'],
                                         parse_dates=['expiration_date'])
             if self.show_progress:
-                log.info('Expiration dates read from disc.')
+                log.info('Expiration dates read from disk.')
         
     def excel_downloader(self, root, url):
         """
