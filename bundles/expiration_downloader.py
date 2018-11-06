@@ -26,6 +26,7 @@ log = Logger(__name__)
 class ExpirationDownloader:
     """
     Download contract expiry dates from CME website.
+    Use urls from quandl provided meta data.
     Parameters: 
     df: dataframe read from csv file downloaded from quandl
     download: False - use file from disk, True - download file form CME
@@ -68,9 +69,9 @@ class ExpirationDownloader:
         Dowload excel file with expiration dates from CME website.
         """
         # get excel file link
+        session = HTMLSession()
+        r = session.get(url)
         try:
-            session = HTMLSession()
-            r = session.get(url)
             r.raise_for_status()
             link = r.html.find('.cmeButtonDownloadExcel', first=True).links.pop()
         except Exception as e:
@@ -116,11 +117,10 @@ class ExpirationDownloader:
         df['description'] = df['description'].str.replace(
             '/mac-swap-futures/', '/swap-futures/')
 
-        #df['year'] = df.code.apply(lambda x: x[-4:])
         df['root_symbol'] = df.code.apply(lambda x: x[:-5])
         df.rename(columns={'code': 'symbol'}, inplace=True)
-        df['exch_symbol'] = df['symbol'].apply(lambda x: x[:-4] + x[-2:])
-        #df = df[df['year'] > '2018']
+        df['symbol'] = df['symbol'].apply(lambda x: x[:-4] + x[-2:])
+
         # Filter out non-active contracts (they don't need updating)
         cutoff_date = df['to_date'].max() - pd.Timedelta(days=2)
         df = df[df['to_date'] >= cutoff_date]
@@ -139,10 +139,11 @@ class ExpirationDownloader:
             if row[1][6] in self.downloaded_tables:
                 continue
             else:
+                # for debugging only
                 self.attempts.append(row[1][6])
                 self.counter += 1
                 if self.counter > 250:
-                    # prevent CME website auto-ban
+                    # throtling to prevent CME website ban
                     time.sleep(10)
                     self.counter = 0
                 df_list.append(self.excel_downloader(row[1][6], row[1][2]))
@@ -150,16 +151,16 @@ class ExpirationDownloader:
         
         big_df = pd.concat(df_list)
         big_df.columns = map(str.lower, big_df.columns)
-        big_df.rename(columns={'product code': 'exch_symbol'}, inplace=True)  
+        big_df.rename(columns={'product code': 'symbol'}, inplace=True)  
 
-        self.data = self.data.merge(big_df, on='exch_symbol', how='inner')
+        self.data = self.data.merge(big_df, on='symbol', how='inner')
         self.data.rename(columns={'last trade': 'expiration_date'}, inplace=True)
         self.data['expiration_date'] = self.data['expiration_date'].astype('datetime64[ns]')
         self.data.index = self.data.symbol
         self.data.drop(['first holding', 'last holding', 'first position', 'last position',
                         'first notice', 'last notice', 'first delivery',
                         'last delivery', 'name', 'description', 'refreshed_at',
-                        'from_date', 'to_date', 'root_symbol', 'exch_symbol',
+                        'from_date', 'to_date', 'root_symbol', 
                         'contract month', 'first trade', 'settlement', 'symbol'], axis=1, inplace=True)
         self.save_to_file()
                        
@@ -189,6 +190,7 @@ class ExpirationDownloader:
         """
         Return expiration date. If the date is not available, fall back on using 
         third Friday of the expiration month.
+        CURRENTLY NOT IN USE
         """
         try:
             return self.data.loc[symbol,'expiration_date']

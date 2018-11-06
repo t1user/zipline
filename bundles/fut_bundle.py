@@ -36,7 +36,10 @@ def get_meta_df(file=META_FILE):
     return pd.read_csv(file,
                        usecols=['root_symbol', 'name', 'exchange', 'multiplier',
                                          'tick_size', 'sector', 'sub_sector',])
-    
+
+def convert_symbol(s):
+    return  s[:-4] + s[-2:]
+
 def load_data_table(file,
                     index_col=None,
                     show_progress=False):
@@ -76,10 +79,12 @@ def load_data_table(file,
     # placeholders were only relevant for rows with option data, which are now removed
     del df['x']
     del df['y']
+    # convert root symbols from 4 digit years to 2 digit years (eg. ESZ2018 becomes ESZ18)
+    df['symbol'] = df['symbol'].apply(convert_symbol)
 
     if contracts:
         # filter only contracts chosen in settings.py
-        df['root'] = df['symbol'].apply(lambda x: x[:-5])
+        df['root'] = df['symbol'].apply(lambda x: x[:-3])
         df = df[df['root'].isin(contracts)]
         del df['root']
         df.reset_index(drop=True, inplace=True)
@@ -116,6 +121,8 @@ def fetch_data_table(download=True, show_progress=False, retries=5):
 def fetch_quandl_specs_table(api_key, download=True, show_progress=False):
     """
     Return quandl spec file with a list of all available contracts.
+    This file has long contract symbols (eg. ESZ2018), that have to be
+    converted before usage.
     """
     if download:
         if show_progress:
@@ -154,9 +161,9 @@ def gen_asset_metadata(raw_data,
 
     meta = get_meta_df(meta_file)
     
-    data['root_symbol'] = [s[:-5] for s in data.symbol.unique()]
+    data['root_symbol'] = [s[:-3] for s in data.symbol.unique()]
     names = quandl_specs['name']
-    names.index = quandl_specs['code']
+    names.index = quandl_specs['code'].apply(convert_symbol)
     data['asset_name'] = data.symbol.apply(lambda x: names.loc[x])
 
     # fix known error in quandl data
