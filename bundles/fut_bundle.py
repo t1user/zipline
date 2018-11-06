@@ -100,7 +100,8 @@ def fetch_data_table(download=True, show_progress=False, retries=5):
             try:
                 if show_progress:
                     log.info('Downloading CME data')
-                    quandl.bulkdownload('CME', filename=QUANDL_ZIP_FILE)
+                quandl.bulkdownload('CME', filename=QUANDL_ZIP_FILE)
+                break
             except Exception:
                 log.exception("Exception raised reading Quandl data. Retrying.")
         else:

@@ -14,11 +14,12 @@ because zipline's continues_future requires at least 2 character symbols.
 # True: download data, False: read data from disk
 # if run for the firsts time has to be True,
 # because there no data saved on disk
-DOWNLOAD = False
+DOWNLOAD = True
 
 # list of symbols to ingest
 # set to empty list to ingest all available symbols
 contracts = ['ES', 'GC', 'JY', 'CL']
+contracts = []
 
 
 # This is a set of the most active contracts on CME
