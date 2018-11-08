@@ -1,14 +1,15 @@
 import pandas as pd
 
-from zipline.data.bundles import register as _register
-from bundles.fut_bundle import futures_bundle
+from zipline.data.bundles import register
+from .fut_bundle import futures_bundle
+from .settings import start_session, end_session
 
-#start_session = pd.Timestamp('2000-1-3', tz='utc')
-#end_session = pd.Timestamp.utcnow()
 
-def register():
-    return _register(
-        'futures',
-        futures_bundle,
+register(
+    'futures',
+    futures_bundle,
+    calendar_name='NYSE',
+    start_session=start_session,
+    end_session=end_session,
     )
 

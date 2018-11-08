@@ -1,9 +1,10 @@
 Custom bundle for ingesting Quandl CME futures data (https://www.quandl.com/data/CME-Chicago-Mercantile-Exchange-Futures-Data) into zipline (https://www.zipline.io/)
 
-settings.py in bundles directory allows to select contracts for which data is to be ingested and whether data should be downloaded or read from disk.
+settings.py in bundles directory allows to select contracts for which data is ingested and whether data should be downloaded or read from disk.
 
-Note:
-Some zipline functions don't work with single character futures symbols so they have been preceded with underscore, eg. C (corn) becomes _C
+Unlike on Quandl, years in futures symbols are encoded as two digits (in line with CME and Quantopian), so symbol for December 2018 S&P500 contract is ESZ18 (rather than ESZ2018 as on Quandl).
+
+Some zipline functions don't work with single character futures root symbols so they have been preceded with underscore, eg. C (corn) becomes _C
 
 
 Requirements:
@@ -20,15 +21,16 @@ Requirements:
 3. in
 ~/.zipline/extension.py
 add:
-from bundles.extension import register
+from bundles.extension import *
 
 4. in
 .../site-packages/zipline/utils/run_algo.py
-add line 155:
+add line 160:
 future_daily_reader=bundle_data.equity_daily_bar_reader,
+(additional argument passed to DataPortal class)
 
-5. add to  PYTHONPATH the directory to which you cloned this repo
-(eg. in my case on windows computer: set PYTHONPATH %userprofile%/zipline)
+5. add to PYTHONPATH directory where this code resides
+(i.e. parent directory to bundles/)
 
 
 Usage:

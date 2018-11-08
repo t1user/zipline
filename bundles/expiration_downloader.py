@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 import time
 import calendar as cal
 from io import BytesIO
@@ -9,7 +8,6 @@ import requests
 from requests_html import HTMLSession
 import pandas as pd
 from logbook import Logger, FileHandler, StreamHandler
-from zipline.assets.futures import CME_CODE_TO_MONTH
 
 
 stream_handler = StreamHandler(
@@ -113,7 +111,7 @@ class ExpirationDownloader:
         df['description'] = df['description'].str.replace(
             'contract_specifications', 'product_calendar_futures')
 
-        # fix an error in urls in quandl meta data file:
+        # fix an error in urls in quandl meta data file (possibly already fixed by Quandl)
         df['description'] = df['description'].str.replace(
             '/mac-swap-futures/', '/swap-futures/')
 
@@ -171,29 +169,3 @@ class ExpirationDownloader:
             log.error('File expiration_dates.csv is open. New file will not be saved to disc')
         except:
             log.error('Unknown error. File with expiry dates will not be saved to disc')
-
-          
-    @staticmethod
-    def third_friday(symbol):
-        """
-        Return third Friday of the expiration month for the passed symbol.
-        Used as a fallback if real expiration date cannot be found.
-        """
-        year = int(symbol[-4:])
-        month = int(CME_CODE_TO_MONTH[symbol[-5]])
-        c = cal.Calendar(firstweekday=cal.SATURDAY)
-        day = c.monthdatescalendar(year, month)[2][-1]
-        return pd.to_datetime(day)
-
-
-    def get_date(self, symbol):
-        """
-        Return expiration date. If the date is not available, fall back on using 
-        third Friday of the expiration month.
-        CURRENTLY NOT IN USE
-        """
-        try:
-            return self.data.loc[symbol,'expiration_date']
-        except KeyError:
-            return self.third_friday(symbol)
-

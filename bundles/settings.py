@@ -1,13 +1,13 @@
 """
-Ingesting the full bundle is a lengthy process (about 2 hours on a decent machine). 
-Settings in this file, allow to limit the number of contracts to be ingested
+Ingesting the full bundle is a lengthy process. 
+Settings in this file allow to limit the number of contracts to be ingested
 and select whether data should be downloaded or read from disk.
 
 Full list of available symbols is here: 
 https://s3.amazonaws.com/quandl-production-static/Ticker+CSV%27s/Futures/CMEGroup.csv
 
-Single character symbols are preceded with '_' so 'C' (corn) becomes '_C'. That's necessary 
-because zipline's continues_future requires at least 2 character symbols.
+Single character root symbols are preceded with '_' so 'C' (corn) becomes '_C'. That's necessary 
+because zipline's continues_future requires at least 2 character root symbols.
 
 """
 
@@ -16,9 +16,15 @@ because zipline's continues_future requires at least 2 character symbols.
 # because there no data saved on disk
 DOWNLOAD = True
 
+# limit time scope of ingested data
+# set to None to include all available data
+# or set dates as pd.Timestamp('2000-01-02, tz='utc')
+start_session = None
+end_session = None
+
+
 # list of symbols to ingest
 # set to empty list to ingest all available symbols
-contracts = ['ES', 'GC', 'JY', 'CL']
 contracts = []
 
 
@@ -57,15 +63,15 @@ contracts = [
     'BZ', # Brent oil
     # fx
     'EC', # EUR/USD
-    #'JY', # JPY/USD
-    #'BP', # GBP/USD
-    #'AD', # AUD/USD
-    #'CD', # CAD/USD
-    #'MP', # MXN/USD
-    #'SF', # CHF/USD
+    'JY', # JPY/USD
+    'BP', # GBP/USD
+    'AD', # AUD/USD
+    'CD', # CAD/USD
+    'MP', # MXN/USD
+    'SF', # CHF/USD
     # agriculture
     '_C', # Corn
-    '_S', # Soybeans
+    #'_S', # Soybeans
     '_W', # Chicago SRW Wheat
     'BO', # Soybean oil
     'SM', # Soybean meal
@@ -73,12 +79,10 @@ contracts = [
     'KW', # KC HRW wheat
     'LN', # Lean hogs
     # metals
-    #'GC', # Gold
+    'GC', # Gold
     'HG', # Copper
     'SI', # Silver
-    #'PL', # Platinum
-    #'PA', # Palladium
+    'PL', # Platinum
+    'PA', # Palladium
     ]
 """
-
-# because of a misterious bug, symbols that have been commented out currently don't work, I'm working on it...

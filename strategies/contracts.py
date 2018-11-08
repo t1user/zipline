@@ -7,9 +7,9 @@ contracts = [
     'TU', # 2y T-note
     'US', # U.S. Treasury bond
     'FF', # 30 day Fed funds
-    'UL', # Ultra T-bond
+    #'UL', # Ultra T-bond
     'SA', # 5y deliverable IRS
-    'N1U',# 10y deliverable IRS
+    #'N1U',# 10y deliverable IRS
     'I3', # 30y deliverable IRS
     # equity
     'ES', # e-mini S&P 500
@@ -17,11 +17,11 @@ contracts = [
     'YM', # e-mini DowJones
     'MD', # e-mini S&P MidCap 400
     'NK', # Nikkei $5
-    'XAF',# e-mini financial sector
-    'XAK',# e-mini technology sector
-    'XAP',# e-mini consumer staples sector
-    'XAU',# e-mini utilities sector
-    'XAY',# e-mini consumer discretionary sector
+    #'XAF',# e-mini financial sector
+    #'XAK',# e-mini technology sector
+    #'XAP',# e-mini consumer staples sector
+    #'XAU',# e-mini utilities sector
+    #'XAY',# e-mini consumer discretionary sector
     # energy
     'CL', # WTI oil
     'NG', # natural gas
@@ -30,7 +30,7 @@ contracts = [
     'BZ', # Brent oil
     # fx
     'EC', # EUR/USD
-    #'JY', # JPY/USD
+    'JY', # JPY/USD
     'BP', # GBP/USD
     'AD', # AUD/USD
     'CD', # CAD/USD

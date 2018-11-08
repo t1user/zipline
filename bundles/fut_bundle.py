@@ -9,8 +9,8 @@ from zipfile import ZipFile
 import quandl
 from logbook import Logger, StreamHandler, FileHandler
 from zipline.data.bundles import core as bundles
-from bundles.expiration_downloader import ExpirationDownloader
-from bundles.settings import DOWNLOAD, contracts
+from .expiration_downloader import ExpirationDownloader
+from .settings import DOWNLOAD, contracts
 
 
 stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
@@ -38,6 +38,8 @@ def get_meta_df(file=META_FILE):
                                          'tick_size', 'sector', 'sub_sector',])
 
 def convert_symbol(s):
+    """Convert long style symbols, eg. ESZ2019 to short style, eg. ESZ19.
+    """
     return  s[:-4] + s[-2:]
 
 def load_data_table(file,
@@ -79,11 +81,14 @@ def load_data_table(file,
     # placeholders were only relevant for rows with option data, which are now removed
     del df['x']
     del df['y']
-    # convert root symbols from 4 digit years to 2 digit years (eg. ESZ2018 becomes ESZ18)
+    # known bad data in Quandl file
+    df.drop(df[df['symbol'] == 'SH1920'].index, inplace=True)
     df['symbol'] = df['symbol'].apply(convert_symbol)
 
+    global contracts
     if contracts:
         # filter only contracts chosen in settings.py
+        contracts = [c[-1] if c.startswith('_') else c for c in contracts] 
         df['root'] = df['symbol'].apply(lambda x: x[:-3])
         df = df[df['root'].isin(contracts)]
         del df['root']
@@ -167,10 +172,6 @@ def gen_asset_metadata(raw_data,
     names.index = quandl_specs['code'].apply(convert_symbol)
     data['asset_name'] = data.symbol.apply(lambda x: names.loc[x])
 
-    # fix known error in quandl data
-    data.loc[data[data['symbol'] == 'NQU1999'].index, 'asset_name'] = \
-        'Nasdaq 100 Mini Futures, September 1999, NQU1999, CME'
-    
     # include only contracts for which metadata is available
     data = data.merge(meta, on='root_symbol', how='inner')
     # precede single character roots with _, eg. C (corn) becomes _C
@@ -225,6 +226,9 @@ def futures_bundle(environ,
     quandl.ApiConfig.api_key = api_key
 
     quandl_specs = fetch_quandl_specs_table(api_key, DOWNLOAD, show_progress)
+    # known bad data form Quandl
+    quandl_specs.drop(quandl_specs[quandl_specs['code'] == 'SH1920'].index, inplace=True)
+
     expiration = ExpirationDownloader(quandl_specs, DOWNLOAD, show_progress)
 
     raw_data = fetch_data_table(
