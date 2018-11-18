@@ -8,9 +8,9 @@ contracts = [
     'US', # U.S. Treasury bond
     'FF', # 30 day Fed funds
     #'UL', # Ultra T-bond
-    'SA', # 5y deliverable IRS
+    #'SA', # 5y deliverable IRS
     #'N1U',# 10y deliverable IRS
-    'I3', # 30y deliverable IRS
+    #'I3', # 30y deliverable IRS
     # equity
     'ES', # e-mini S&P 500
     'NQ', # e-mini Nasdaq 100
@@ -28,6 +28,7 @@ contracts = [
     'RB', # RBOB gasoline
     'HO', # NY Harbor ULSD
     'BZ', # Brent oil
+    #'71', # Ethanol
     # fx
     'EC', # EUR/USD
     'JY', # JPY/USD
@@ -36,6 +37,7 @@ contracts = [
     'CD', # CAD/USD
     'MP', # MXN/USD
     'SF', # CHF/USD
+    'RU', # RUB/USD
     # agriculture
     '_C', # Corn
     '_S', # Soybeans
@@ -45,6 +47,9 @@ contracts = [
     'LC', # Live cattle
     'KW', # KC HRW wheat
     'LN', # Lean hogs
+    'DA', # Milk
+    #'CSC',# Cheese
+    #'CPO', # Crude palm oil
     # metals
     'GC', # Gold
     'HG', # Copper
