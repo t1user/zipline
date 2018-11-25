@@ -1,6 +1,6 @@
 import os
 import sys
-import numpy  as np
+import numpy as np
 import pandas as pd
 from six import iteritems
 from io import BytesIO
@@ -13,9 +13,10 @@ from .expiration_downloader import ExpirationDownloader
 from .settings import DOWNLOAD, contracts
 
 
-stream_handler = StreamHandler(sys.stdout, format_string=" | {record.message}", bubble=True)
+stream_handler = StreamHandler(
+    sys.stdout, format_string=" | {record.message}", bubble=True)
 log = Logger(__name__)
-#stream_handler.push_application()
+# stream_handler.push_application()
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -28,19 +29,20 @@ META_FILE = os.path.join(BASE_DIR, 'meta.csv')
 QUANDL_SPECS_FILE = os.path.join(BASE_DIR, 'CME_metadata.csv')
 
 
-
 def get_meta_df(file=META_FILE):
     """Fetch metadata from csv file, which is based on modified quandl supplied meta file.
 
     """
     return pd.read_csv(file,
                        usecols=['root_symbol', 'name', 'exchange', 'multiplier',
-                                         'tick_size', 'sector', 'sub_sector',])
+                                'tick_size', 'sector', 'sub_sector', ])
+
 
 def convert_symbol(s):
     """Convert long style symbols, eg. ESZ2019 to short style, eg. ESZ19.
     """
-    return  s[:-4] + s[-2:]
+    return s[:-4] + s[-2:]
+
 
 def load_data_table(file,
                     index_col=None,
@@ -70,14 +72,15 @@ def load_data_table(file,
                     'close',
                     'volume',
                     'open_interest',
-                    'x', # placeholder to ensure parsing without errors
-                    'y', # placeholder
+                    'x',  # placeholder to ensure parsing without errors
+                    'y',  # placeholder
                 ],
             )
     # drop option codes which are mistakenly included in Quandl file
     df.drop(df[df['symbol'].str.len() > 8].index, inplace=True)
     # drop various indexes included in Quandl file
-    df.drop(df[df['symbol'].str.contains('INDEX', regex=False) == True].index, inplace=True)
+    df.drop(df[df['symbol'].str.contains(
+        'INDEX', regex=False) == True].index, inplace=True)
     # placeholders were only relevant for rows with option data, which are now removed
     del df['x']
     del df['y']
@@ -88,7 +91,7 @@ def load_data_table(file,
     global contracts
     if contracts:
         # filter only contracts chosen in settings.py
-        contracts = [c[-1] if c.startswith('_') else c for c in contracts] 
+        contracts = [c[-1] if c.startswith('_') else c for c in contracts]
         df['root'] = df['symbol'].apply(lambda x: x[:-3])
         df = df[df['root'].isin(contracts)]
         del df['root']
@@ -96,7 +99,7 @@ def load_data_table(file,
 
     return df
 
-    
+
 def fetch_data_table(download=True, show_progress=False, retries=5):
     """ Fetch CME data table from Quandl
     """
@@ -108,7 +111,8 @@ def fetch_data_table(download=True, show_progress=False, retries=5):
                 quandl.bulkdownload('CME', filename=QUANDL_ZIP_FILE)
                 break
             except Exception:
-                log.exception("Exception raised reading Quandl data. Retrying.")
+                log.exception(
+                    "Exception raised reading Quandl data. Retrying.")
         else:
             raise ValueError(
                 "Failed to download Quandl data after %d attempts." % (retries)
@@ -116,12 +120,12 @@ def fetch_data_table(download=True, show_progress=False, retries=5):
     else:
         if show_progress:
             log.info('Reading CME data from disk')
-            
+
     return load_data_table(
         file=QUANDL_ZIP_FILE,
         index_col=None,
         show_progress=show_progress,
-        )
+    )
 
 
 def fetch_quandl_specs_table(api_key, download=True, show_progress=False):
@@ -137,8 +141,8 @@ def fetch_quandl_specs_table(api_key, download=True, show_progress=False):
         r = requests.get('https://www.quandl.com/api/v3/databases/CME/metadata?api_key={}'
                          .format(api_key))
         r.raise_for_status()
-        df =  pd.read_csv(BytesIO(r.content), compression='zip',
-                          parse_dates=['from_date', 'to_date'])
+        df = pd.read_csv(BytesIO(r.content), compression='zip',
+                         parse_dates=['from_date', 'to_date'])
         df.to_csv(QUANDL_SPECS_FILE, index=False)
         return df
     else:
@@ -161,12 +165,12 @@ def gen_asset_metadata(raw_data,
 
     data.reset_index(inplace=True)
     data.columns = data.columns.get_level_values(1)
-    data.rename(columns={'': 'symbol', 'amin':'start_date', 'amax': 'end_date'},
-                inplace=True)  
+    data.rename(columns={'': 'symbol', 'amin': 'start_date', 'amax': 'end_date'},
+                inplace=True)
     data['first_traded'] = data['start_date']
 
     meta = get_meta_df(meta_file)
-    
+
     data['root_symbol'] = [s[:-3] for s in data.symbol.unique()]
     names = quandl_specs['name']
     names.index = quandl_specs['code'].apply(convert_symbol)
@@ -175,7 +179,8 @@ def gen_asset_metadata(raw_data,
     # include only contracts for which metadata is available
     data = data.merge(meta, on='root_symbol', how='inner')
     # precede single character roots with _, eg. C (corn) becomes _C
-    data['root_symbol'] = data['root_symbol'].apply(lambda x: '_' + x if len(x) < 2 else x)
+    data['root_symbol'] = data['root_symbol'].apply(
+        lambda x: '_' + x if len(x) < 2 else x)
 
     # DataFrame for mapping expiry dates, which uses data read from CME website where available
     # if not available: end_date
@@ -185,9 +190,9 @@ def gen_asset_metadata(raw_data,
     expiration_dates = expiration.data.combine_first(end_dates)
 
     data['expiration_date'] = data.symbol.map(expiration_dates.expiration_date)
-    
-    data['auto_close_date'] = data['expiration_date'] 
-    data['notice_date'] = data['auto_close_date']- pd.Timedelta(days=2)
+
+    data['auto_close_date'] = data['expiration_date']
+    data['notice_date'] = data['auto_close_date'] - pd.Timedelta(days=2)
 
     return data.sort_values(by=['auto_close_date']).reset_index(drop=True)
 
@@ -202,7 +207,8 @@ def parse_pricing_and_vol(data,
         ).reindex(
             sessions.tz_localize(None)
         ).fillna(0.0)
-        yield asset_id, asset_data    
+        yield asset_id, asset_data
+
 
 @bundles.register('futures')
 def futures_bundle(environ,
@@ -217,7 +223,6 @@ def futures_bundle(environ,
                    show_progress,
                    output_dir):
 
-    
     api_key = environ.get('QUANDL_API_KEY')
     if api_key is None:
         raise ValueError(
@@ -227,7 +232,8 @@ def futures_bundle(environ,
 
     quandl_specs = fetch_quandl_specs_table(api_key, DOWNLOAD, show_progress)
     # known bad data form Quandl
-    quandl_specs.drop(quandl_specs[quandl_specs['code'] == 'SH1920'].index, inplace=True)
+    quandl_specs.drop(
+        quandl_specs[quandl_specs['code'] == 'SH1920'].index, inplace=True)
 
     expiration = ExpirationDownloader(quandl_specs, DOWNLOAD, show_progress)
 
@@ -243,23 +249,27 @@ def futures_bundle(environ,
                                         META_FILE)
 
     root_symbols = asset_metadata.root_symbol.unique()
-    root_symbols = pd.DataFrame(root_symbols, columns = ['root_symbol'])
+    root_symbols = pd.DataFrame(root_symbols, columns=['root_symbol'])
     root_symbols['root_symbol_id'] = root_symbols.index.values
-    
-    root_symbols['sector'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['sector'].iloc[0] for rs in root_symbols.root_symbol.unique()]
-    root_symbols['sub_sector'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['sub_sector'].iloc[0] for rs in root_symbols.root_symbol.unique()]
-    root_symbols['sector'] = root_symbols['sector'].str.cat(root_symbols['sub_sector'], sep='/')
 
+    root_symbols['sector'] = [asset_metadata.loc[asset_metadata['root_symbol']
+                                                 == rs]['sector'].iloc[0] for rs in root_symbols.root_symbol.unique()]
+    root_symbols['sub_sector'] = [asset_metadata.loc[asset_metadata['root_symbol']
+                                                     == rs]['sub_sector'].iloc[0] for rs in root_symbols.root_symbol.unique()]
+    root_symbols['sector'] = root_symbols['sector'].str.cat(
+        root_symbols['sub_sector'], sep='/')
 
-    root_symbols['exchange'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['exchange'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
-    root_symbols['description'] = [asset_metadata.loc[asset_metadata['root_symbol']==rs]['name'].iloc[0] for rs in root_symbols.root_symbol.unique() ]
+    root_symbols['exchange'] = [asset_metadata.loc[asset_metadata['root_symbol']
+                                                   == rs]['exchange'].iloc[0] for rs in root_symbols.root_symbol.unique()]
+    root_symbols['description'] = [asset_metadata.loc[asset_metadata['root_symbol']
+                                                      == rs]['name'].iloc[0] for rs in root_symbols.root_symbol.unique()]
 
     # create empty SQLite tables to prevent lookup errors in algorithms
     divs_splits = {'divs': pd.DataFrame(columns=['sid', 'amount', 'ex_date', 'record_date',
-                                              'declared_date', 'pay_date']),
+                                                 'declared_date', 'pay_date']),
                    'splits': pd.DataFrame(columns=['sid', 'ratio', 'effective_date'])}
-    adjustment_writer.write(splits=divs_splits['splits'], dividends=divs_splits['divs'])
-
+    adjustment_writer.write(
+        splits=divs_splits['splits'], dividends=divs_splits['divs'])
 
     asset_db_writer.write(futures=asset_metadata, root_symbols=root_symbols)
 
@@ -274,8 +284,3 @@ def futures_bundle(environ,
         ),
         show_progress=show_progress
     )
-    
-
-
-
-

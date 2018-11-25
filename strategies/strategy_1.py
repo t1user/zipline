@@ -3,6 +3,9 @@
 import pandas as pd
 import numpy as np
 import talib
+import sys
+from datetime import datetime
+from logbook import Logger, StreamHandler, FileHandler
 from zipline.api import (order, record, symbol, continuous_future,
                          future_symbol, get_open_orders, order_target_percent,
                          set_slippage, set_commission, get_datetime,
@@ -10,13 +13,24 @@ from zipline.api import (order, record, symbol, continuous_future,
 from zipline.finance.slippage import FixedSlippage
 from zipline.finance.commission import PerTrade
 from contracts import contracts
+import pdb
+
+
+stream_handler = StreamHandler(
+    sys.stdout, format_string=" | {record.message}", bubble=True)
+# file_handler = FileHandler('strategy_1_{}.log'.format(
+#    datetime.today().strftime("%Y-%m-%d_%H-%M")),
+#    format_string=" | {record.message}", bubble=True)
+log = Logger(__name__)
+# file_handler.push_application()
+# stream_handler.push_application()
 
 
 FAST_MA = 25
 SLOW_MA = 100
-BREAKOUT = 25 # breakout beyond x days max/min
-STOP = 2 # stop after x ATRs
-RISK = .2 # % of capital daily risk per position
+BREAKOUT = 50  # breakout beyond x days max/min
+STOP = 2  # stop after x ATRs
+RISK = .2  # % of capital daily risk per position
 
 
 def initialize(context):
@@ -36,21 +50,22 @@ def handle_data(context, data):
                        if contract.start_date <= get_datetime() - pd.Timedelta(days=SLOW_MA+2)
                        and contract.end_date >= get_datetime()]
     hist = data.history(valid_contracts,
-                        fields = ['price', 'high', 'low'],
-                        bar_count = SLOW_MA + 1,
-                        frequency = '1d')
+                        fields=['price', 'high', 'low'],
+                        bar_count=SLOW_MA + 1,
+                        frequency='1d')
 
-    slow_ma = hist['price'].apply(lambda x: 
-                                  talib.EMA(x.as_matrix(), 
+    slow_ma = hist['price'].apply(lambda x:
+                                  talib.EMA(x.as_matrix(),
                                             timeperiod=SLOW_MA)[-1])
-    fast_ma = hist['price'].apply(lambda x: 
-                                  talib.EMA(x.as_matrix(), 
+    fast_ma = hist['price'].apply(lambda x:
+                                  talib.EMA(x.as_matrix(),
                                             timeperiod=FAST_MA)[-1])
-    atr = hist.apply(lambda x: talib.ATR(x['high'].fillna(x['price']).as_matrix(), 
-                                         x['low'].fillna(x['price']).as_matrix(),
-                                         x['price'].as_matrix(), 
-                                         timeperiod=SLOW_MA)[-1], 
-                     axis=(1,0))
+    atr = hist.apply(lambda x: talib.ATR(x['high'].fillna(x['price']).as_matrix(),
+                                         x['low'].fillna(
+                                             x['price']).as_matrix(),
+                                         x['price'].as_matrix(),
+                                         timeperiod=SLOW_MA)[-1],
+                     axis=(1, 0))
     # breakout above is a buy signal
     upper = hist['price'][-BREAKOUT-1:-2].max(axis=0)
     # breakout below is a sell signal
@@ -60,9 +75,9 @@ def handle_data(context, data):
 
     # position sizes as % of portfolio value
     weights = RISK/100 * price/atr
-    
-    longs = ((price > upper) & (fast_ma > slow_ma)) * weights 
-    shorts = ((price < lower) & (fast_ma < slow_ma)) * -weights   
+
+    longs = ((price > upper) & (fast_ma > slow_ma)) * weights
+    shorts = ((price < lower) & (fast_ma < slow_ma)) * -weights
     signals = longs + shorts
 
     # convert Continuous_future objects in indexes to current Future objects
@@ -70,7 +85,6 @@ def handle_data(context, data):
     atr.index = data.current(atr.index, 'contract')
     price.index = data.current(price.index, 'contract')
     signals = signals[signals != 0].dropna()
-
 
     # rollover expiring contracts
     for cont, pos in context.portfolio.positions.items():
@@ -88,7 +102,7 @@ def handle_data(context, data):
             atr[cont] = atr[current]
             price[cont] = price[current]
 
-    # implement stop-loss 
+    # implement stop-loss
     for contract, position in context.portfolio.positions.items():
         if contract in context.min_max:
             context.min_max[contract] = (min(context.min_max[contract][0],
@@ -98,19 +112,21 @@ def handle_data(context, data):
                                              position.cost_basis,
                                              position.last_sale_price))
         else:
-          context.min_max[contract] = (min(position.cost_basis,
-                                           position.last_sale_price),
-                                       max(position.cost_basis,
-                                           position.last_sale_price))    
+            context.min_max[contract] = (min(position.cost_basis,
+                                             position.last_sale_price),
+                                         max(position.cost_basis,
+                                             position.last_sale_price))
 
         # calculate stop loss level
         if position.amount > 0:
-            stop_price = context.min_max[contract][1] - atr[contract].item() * STOP
+            stop_price = context.min_max[contract][1] - \
+                atr[contract].item() * STOP
             if price[contract] <= stop_price:
                 signals[contract] = 0
                 del context.min_max[contract]
         if position.amount < 0:
-            stop_price = context.min_max[contract][0] + atr[contract].item() * STOP
+            stop_price = context.min_max[contract][0] + \
+                atr[contract].item() * STOP
             if price[contract] >= stop_price:
                 signals[contract] = 0
                 del context.min_max[contract]
@@ -118,8 +134,11 @@ def handle_data(context, data):
     # execute trades
     existing_positions = list(context.portfolio.positions.keys())
     for asset, target in signals.items():
+        # pdb.set_trace()
+        log.info('transactions on {}:'.format(get_datetime()))
         if asset in existing_positions:
             # don't trade in existing positions unless it's stop loss
             if target != 0:
                 continue
+        log.info('{}: {}'.format(asset, target))
         order_target_percent(asset, target)

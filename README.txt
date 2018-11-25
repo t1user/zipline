@@ -13,7 +13,7 @@ Requirements:
 1. set environment variable QUANDL_API_KEY
 
 2. install packages:
-- zipline (obviously -:)
+- zipline 1.3.0
 - quandl
 - requests-html
 - xlrd
@@ -25,7 +25,7 @@ from bundles.extension import *
 
 4. in
 .../site-packages/zipline/utils/run_algo.py
-add line 160:
+add line 169:
 future_daily_reader=bundle_data.equity_daily_bar_reader,
 (additional argument passed to DataPortal class)
 
