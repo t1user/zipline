@@ -7,7 +7,7 @@ from zipline.api import (order, record, symbol, continuous_future,
                          future_symbol, get_open_orders, order_target_percent,
                          set_slippage, set_commission, get_datetime,
                          schedule_function, date_rules, time_rules)
-from zipline.finance.slippage import FixedSlippage
+from zipline.finance.slippage import FixedSlippage, SlippageModel
 from zipline.finance.commission import PerTrade
 from contracts import contracts
 import scipy.linalg as lg
@@ -17,12 +17,24 @@ FAST_MA = 25
 SLOW_MA = 100
 BREAKOUT = 50  # breakout beyond x days max/min
 STOP = 2  # stop after x atr
-RISK = .02  # fraction of portfolio in daily portfolio std
+RISK = .005  # fraction of portfolio in daily portfolio std
 POS_LIMIT = .002  # daily position risk limit as fraction of portfolio in position std
 
 
+class InstantSlippage(SlippageModel):
+    """
+    Workaround to trade at openning rather than closing prices.
+    """
+
+    def process_order(self, data, order):
+        # Use price from previous bar
+        price = data.history(order.sid, 'open', 1, '1d').fillna(
+            data.history(order.sid, 'price', 2, '1d')[0])[-1]
+        return (price, order.amount)
+
+
 def initialize(context):
-    set_slippage(us_futures=FixedSlippage(spread=0.0))
+    set_slippage(us_futures=InstantSlippage())
     set_commission(us_futures=PerTrade(0))
     context.contracts = [
         continuous_future(contract,
@@ -106,7 +118,7 @@ def get_entries(context):
     signals = longs + shorts
     signals = signals[signals != 0].dropna()
     # convert index from continues_future to future object
-    signals.index = signals.index.map(lambda x: context.translate_root[x])
+    signals.index = signals.index.map(lambda x: context.translate_root.get(x))
 
     return signals
 
@@ -123,12 +135,13 @@ def get_rolls(context):
             # close existing contract
             signals[cont] = 0
             root = cont.root_symbol
-            current = context.translate[continuous_future(root)]
+            current = context.translate.get(continuous_future(root))
             position = context.portfolio.positions[cont]
             # open current contract only if unrealised PnL positive
             if (position.last_sale_price
                     - position.cost_basis) * position.amount > 0:
-                signals[current] = 1 * sign
+                if current:  # contract could've been delisted
+                    signals[current] = 1 * sign
     return signals
 
 
@@ -151,19 +164,20 @@ def get_stops(context):
                                              position.last_sale_price),
                                          max(position.cost_basis,
                                              position.last_sale_price))
-
-        # pdb.set_trace()
+        # get out if contract expired
+        if not context.atr.get(contract.root_symbol):
+            continue
         # calculate stop loss level
         if position.amount > 0:
             stop_price = context.min_max[contract][1] - \
-                context.atr[contract.root_symbol].item() * STOP
-            if context.last_price[contract.root_symbol] <= stop_price:
+                context.atr.get(contract.root_symbol).item() * STOP
+            if context.last_price.get(contract.root_symbol) <= stop_price:
                 signals[contract] = 0
                 del context.min_max[contract]
         if position.amount < 0:
             stop_price = context.min_max[contract][0] + \
-                context.atr[contract.root_symbol].item() * STOP
-            if context.last_price[contract.root_symbol] >= stop_price:
+                context.atr.get(contract.root_symbol).item() * STOP
+            if context.last_price.get(contract.root_symbol) >= stop_price:
                 signals[contract] = 0
                 del context.min_max[contract]
     return signals
@@ -200,7 +214,8 @@ def optimize_portfolio(context, target_positions):
     positions_roots = [x.root_symbol for x in target_positions.index]
     prices = prices[positions_roots]
     returns_df = prices.pct_change()[1:]
-    returns = returns_df.mean().abs().values
+    returns = returns_df.mean().values
+    #returns = returns_df.mean().abs().values
     returns = np.multiply(returns, target_positions.values)
     # returns = returns_df.mean().abs().values
 
@@ -216,11 +231,11 @@ def optimize_portfolio(context, target_positions):
     optimized = pd.Series(data=optimized_weights, index=target_positions.index)
 
     # calculate optimized portfolio std
-    # std = np.sqrt(optimized_weights.T.dot(
-    #    covariance_matrix).dot(optimized_weights))
+    std = np.sqrt(optimized_weights.T.dot(
+        covariance_matrix).dot(optimized_weights))
     # scale to required risk level
-    # risk_factor = RISK/std
-    # optimized = optimized * risk_factor.item()
+    risk_factor = RISK/std
+    optimized = optimized * risk_factor.item()
 
     # max_weights = POS_LIMIT/100 * context.last_price/std
     # returns for every

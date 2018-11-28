@@ -8,9 +8,9 @@ contracts = [
     'US',  # U.S. Treasury bond
     'FF',  # 30 day Fed funds
     'UL',  # Ultra T-bond
-    'SA',  # 5y deliverable IRS
+    # 'SA',  # 5y deliverable IRS; wrong data in 2013
     # 'N1U',# 10y deliverable IRS
-    'I3',  # 30y deliverable IRS
+    # 'I3',  # 30y deliverable IRS; missing data for contract: I3Z13
     # equity
     'ES',  # e-mini S&P 500
     'NQ',  # e-mini Nasdaq 100

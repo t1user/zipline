@@ -10,7 +10,7 @@ from zipline.api import (order, record, symbol, continuous_future,
                          future_symbol, get_open_orders, order_target_percent,
                          set_slippage, set_commission, get_datetime,
                          schedule_function, date_rules, time_rules)
-from zipline.finance.slippage import FixedSlippage
+from zipline.finance.slippage import FixedSlippage, SlippageModel
 from zipline.finance.commission import PerTrade
 from contracts import contracts
 import pdb
@@ -33,8 +33,20 @@ STOP = 2  # stop after x ATRs
 RISK = .2  # % of capital daily risk per position
 
 
+class InstantSlippage(SlippageModel):
+    """
+    Workaround to trade at openning rather than closing prices.
+    """
+
+    def process_order(self, data, order):
+        # Use price from previous bar
+        price = data.history(order.sid, 'open', 1, '1d').fillna(
+            data.history(order.sid, 'price', 2, '1d')[0])[-1]
+        return (price, order.amount)
+
+
 def initialize(context):
-    set_slippage(us_futures=FixedSlippage(spread=0.0))
+    set_slippage(us_futures=InstantSlippage())
     set_commission(us_futures=PerTrade(0))
     context.contracts = [
         continuous_future(contract,
@@ -97,7 +109,8 @@ def handle_data(context, data):
             position = context.portfolio.positions[cont]
             # open current contract only if unrealised PnL positive
             if (position.last_sale_price - position.cost_basis) * position.amount > 0:
-                signals[current] = weight
+                if current:  # contract could've been delisted
+                    signals[current] = weight
             # still need the old contract for stop-loss calculation
             atr[cont] = atr[current]
             price[cont] = price[current]
