@@ -45,7 +45,7 @@ contracts = [
     'BO',  # Soybean oil
     'SM',  # Soybean meal
     'LC',  # Live cattle
-    'KW',  # KC HRW wheat
+    # 'KW',  # KC HRW wheat
     'LN',  # Lean hogs
     'DA',  # Milk
     # 'CSC',# Cheese

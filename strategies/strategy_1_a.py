@@ -13,10 +13,10 @@ from contracts import contracts
 import pdb
 
 FAST_MA = 50
-SLOW_MA = 100
+SLOW_MA = 200
 BREAKOUT = 50  # breakout beyond x days max/min
-STOP = 2  # stop after x atr
-RISK = .2  # % of capital daily risk per position
+STOP = 3  # stop after x atr
+RISK = .3  # % of capital daily risk per position
 
 
 class InstantSlippage(SlippageModel):
@@ -53,10 +53,6 @@ def handle_data(context, data):
                         bar_count=SLOW_MA + 1,
                         frequency='1d')
 
-    # print(get_datetime())
-    # print(hist['price'])
-    # print('---------------------')
-
     context.slow_ma = hist['price'].apply(lambda x: talib.EMA(
         x.values, timeperiod=SLOW_MA)[-1])
     context.fast_ma = hist['price'].apply(lambda x: talib.EMA(
@@ -66,7 +62,7 @@ def handle_data(context, data):
         x['low'].fillna(x['price']).values,
         x['price'].values,
         timeperiod=SLOW_MA)[-1],
-        axis=(1, 0))
+        axis=(1, 0)).fillna(method='ffill')
 
     # std = hist.pct_change().std()
 
@@ -233,11 +229,13 @@ def trade(context, positions, stops):
     existing_positions = list(context.portfolio.positions.keys())
     trades = positions.append(stops)
     for asset, target in trades.items():
+
         if asset in existing_positions:
             # don't trade in existing positions unless it's stop loss
             # i.e. don't adjust position size for changes in volatility
             if target != 0:
                 continue
+
         order_target_percent(asset, target)
 
 

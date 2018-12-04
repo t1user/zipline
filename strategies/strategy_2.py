@@ -64,7 +64,7 @@ def handle_data(context, data):
         x['low'].fillna(x['price']).values,
         x['price'].values,
         timeperiod=SLOW_MA)[-1],
-        axis=(1, 0))
+        axis=(1, 0)).fillna(method='ffill')
 
     # std = hist.pct_change().std()
 
