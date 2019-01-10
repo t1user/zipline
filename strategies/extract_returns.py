@@ -1,6 +1,7 @@
 import pandas as pd
 from pyfolio.txn import map_transaction
-
+#import sqlalchemy as sa
+#from utils import bundle_data
 
 
 def format_asset(asset):
@@ -19,6 +20,32 @@ def format_asset(asset):
         return asset.symbol
     else:
         return asset
+
+
+def get_sector(asset_object):
+    """
+    Extract sector for asset.
+
+    Neccessary to divide position values by 100 for interest rate
+    products.
+    """
+    root_symbol = asset_object.root_symbol
+    d = bundle_data.asset_finder.futures_root_symbols.c
+    fields = (d.sector,)
+    sector = sa.select(fields).where(
+        d.root_symbol == root_symbol).execute().scalar()
+    return sector.split('/')[0]
+
+
+def adjustment_factor(sector):
+    """
+    used to adjust position values of interest rate products
+    (quoted in percent)
+    """
+    if sector == 'Interest Rate':
+        return 0.01
+    else:
+        return 1
 
 
 def extract_pos(positions, cash):
@@ -43,7 +70,9 @@ def extract_pos(positions, cash):
     """
 
     positions = positions.copy()
-    positions['values'] = positions.amount * positions.last_sale_price * positions.sid.map(lambda x: x.multiplier)
+    positions['values'] = positions.amount * positions.last_sale_price * \
+        positions.sid.map(lambda x: x.multiplier)
+    #positions.sid.map(lambda x: adjustment_factor(get_sector(x)))
     cash.name = 'cash'
 
     values = positions.reset_index().pivot_table(index='index',
@@ -85,14 +114,21 @@ def make_transaction_frame(transactions):
             txn = map_transaction(txn)
             transaction_list.append(txn)
     df = pd.DataFrame(sorted(transaction_list, key=lambda x: x['dt']))
-    df['txn_dollars'] = -df['amount'] * df['price'] * df['sid'].apply(lambda x: x.multiplier)
+    df['txn_dollars'] = -df['amount'] * df['price'] * \
+        df['sid'].apply(lambda x: x.multiplier)
+    #df['sid'].apply(lambda x: adjustment_factor(get_sector(x)))
 
     df.index = list(map(pd.Timestamp, df.dt.values))
     return df
 
-  
+
 def extract_returns(backtest):
     """
+    THIS IS A MODIFICATION OF pyfolio.utils.extract_rets_pos_txn_from_zipline(backtest)
+    TO BETTER REPRESENT FUTURES POSITION VALUE,
+    ie. position value = price * amount * multiplier [* 0.01 for Interest Rate products]
+    (rather than price * amount)
+
     Extract returns, positions, transactions and leverage from the
     backtest data structure returned by zipline.TradingAlgorithm.run().
 
@@ -126,7 +162,7 @@ def extract_returns(backtest):
     >>> pyfolio.tears.create_full_tear_sheet(returns,
     >>>     positions, transactions)
     """
- 
+
     backtest.index = backtest.index.normalize()
     if backtest.index.tzinfo is None:
         backtest.index = backtest.index.tz_localize('UTC')

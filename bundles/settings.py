@@ -14,7 +14,7 @@ because zipline's continues_future requires at least 2 character root symbols.
 # True: download data, False: read data from disk
 # if run for the firsts time has to be True,
 # because there no data saved on disk
-DOWNLOAD = True
+DOWNLOAD = False
 
 # limit time scope of ingested data
 # set to None to include all available data

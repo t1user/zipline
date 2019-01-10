@@ -3,14 +3,14 @@
 import pandas as pd
 import numpy as np
 import talib
-from zipline.api import (order, record, symbol, continuous_future,
-                         future_symbol, get_open_orders, order_target_percent,
-                         set_slippage, set_commission, get_datetime,
-                         schedule_function, date_rules, time_rules)
-from zipline.finance.slippage import FixedSlippage, SlippageModel
+from zipline.api import (continuous_future, get_open_orders,
+                         order_target_percent, set_slippage,
+                         set_commission, get_datetime, record
+                         )
+from zipline.finance.slippage import SlippageModel
 from zipline.finance.commission import PerTrade
 from contracts import contracts
-import pdb
+
 
 FAST_MA = 50
 SLOW_MA = 200
@@ -44,6 +44,22 @@ def initialize(context):
 
 
 def handle_data(context, data):
+
+    get_data(context, data)
+    # generate and process trading signals
+    entries = get_entries(context)
+    rolls = get_rolls(context)
+    stops = get_stops(context)
+    signals = pd.concat([entries, rolls, stops])
+    positions, stops = process_signals(context, signals)
+
+    # optimize portfolio and trade
+    if not signals.empty:
+        portfolio = optimize_portfolio(context, positions)
+        trade(context, portfolio, stops)
+
+
+def get_data(context, data):
     valid_contracts = [contract for contract in context.contracts
                        if contract.start_date <= get_datetime() - pd.Timedelta(days=SLOW_MA+2)
                        and contract.end_date >= get_datetime()]
@@ -82,18 +98,6 @@ def handle_data(context, data):
             context.fast_ma)
     context.prices.columns = context.prices.columns.map(
         lambda x: x.root_symbol)
-
-    # generate and process trading signals
-    entries = get_entries(context)
-    rolls = get_rolls(context)
-    stops = get_stops(context)
-    signals = pd.concat([entries, rolls, stops])
-    positions, stops = process_signals(context, signals)
-
-    # optimize portfolio and trade
-    if not signals.empty:
-        portfolio = optimize_portfolio(context, positions)
-        trade(context, portfolio, stops)
 
 
 def get_entries(context):
@@ -218,7 +222,7 @@ def optimize_portfolio(context, target_positions):
     weights.index = weights.index.map(lambda x: target_contracts[x])
 
     target_positions = target_positions * weights
-
+    record(atr=context.atr, target=target_positions)
     return target_positions
 
 
@@ -228,6 +232,7 @@ def trade(context, positions, stops):
     """
     existing_positions = list(context.portfolio.positions.keys())
     trades = positions.append(stops)
+    orders = get_open_orders()
     for asset, target in trades.items():
 
         if asset in existing_positions:
@@ -236,7 +241,9 @@ def trade(context, positions, stops):
             if target != 0:
                 continue
 
-        order_target_percent(asset, target)
+        if asset not in orders:
+            # don't issue new orders if existing orders haven't been filled
+            order_target_percent(asset, target)
 
 
 def reindex(*args):

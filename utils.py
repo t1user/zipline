@@ -1,3 +1,5 @@
+# This is a set of utils that allows to access data outside of algorithms
+
 import os
 from zipline.data import bundles
 from zipline.data.data_portal import DataPortal
