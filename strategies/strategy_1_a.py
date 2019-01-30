@@ -17,6 +17,7 @@ SLOW_MA = 200
 BREAKOUT = 50  # breakout beyond x days max/min
 STOP = 3  # stop after x atr
 RISK = .3  # % of capital daily risk per position
+REBALANCE = False
 
 
 class InstantSlippage(SlippageModel):
@@ -41,6 +42,10 @@ def initialize(context):
                           roll='volume')
         for contract in contracts]
     context.min_max = {}
+    # auxiliary variables selectively used by various strategies
+    context.rebalance = False
+    context.counter = 0
+    context.target_portfolio = pd.Series()
 
 
 def handle_data(context, data):
@@ -207,6 +212,8 @@ def process_signals(context, signals):
 
     # generate list of positions to be closed
     stops = signals[signals == 0]
+    # remove potential duplicates (roll + stop-out on the same day)
+    stops = stops[~stops.index.duplicated()]
     return target_positions, stops
 
 
@@ -231,15 +238,18 @@ def trade(context, positions, stops):
     Execute trades.
     """
     existing_positions = list(context.portfolio.positions.keys())
+    if not context.rebalance:
+        trades = context.target_portfolio
     trades = positions.append(stops)
     orders = get_open_orders()
     for asset, target in trades.items():
 
-        if asset in existing_positions:
-            # don't trade in existing positions unless it's stop loss
-            # i.e. don't adjust position size for changes in volatility
-            if target != 0:
-                continue
+        if not context.rebalance:
+            if asset in existing_positions:
+                # don't trade in existing positions unless it's stop loss
+                # i.e. don't adjust position size for changes in volatility
+                if target != 0:
+                    continue
 
         if asset not in orders:
             # don't issue new orders if existing orders haven't been filled

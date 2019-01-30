@@ -17,3 +17,4 @@ bundles/expiration_dates.csv
 .#*
 .ipynb_checkpoints
 __pycache__
+.idea

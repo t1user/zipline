@@ -8,7 +8,7 @@ import datetime
 
 ticker = 'SPY'
 
-ua = UserAgent()
+ua = UserAgent(verify_ssl=False)
 headers = {'User-Agent': ua.chrome}
 
 r = requests.get(
